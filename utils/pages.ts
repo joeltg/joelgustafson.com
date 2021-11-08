@@ -1,5 +1,5 @@
-import { createReadStream } from "node:fs"
-import * as readline from "node:readline"
+import { createReadStream } from "fs"
+import * as readline from "readline"
 
 export interface PageProps {
 	title?: string

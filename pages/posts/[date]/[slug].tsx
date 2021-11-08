@@ -1,8 +1,8 @@
 import React from "react"
 import type { GetStaticPaths, GetStaticProps } from "next"
 
-import { readFileSync, readdirSync } from "node:fs"
-import { resolve } from "node:path"
+import { readFileSync, readdirSync } from "fs"
+import { resolve } from "path"
 
 import Markdown from "components/Markdown"
 

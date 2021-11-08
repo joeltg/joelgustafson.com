@@ -1,8 +1,8 @@
 import React from "react"
 import type { GetStaticProps } from "next"
 
-import { readdirSync } from "node:fs"
-import { resolve } from "node:path"
+import { readdirSync } from "fs"
+import { resolve } from "path"
 
 import { getTitle, PageProps } from "utils/pages"
 
