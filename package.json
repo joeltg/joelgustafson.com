@@ -1,0 +1,34 @@
+{
+	"private": true,
+	"name": "joelgustafson.com",
+	"version": "0.0.0",
+	"scripts": {
+		"dev": "next dev",
+		"start": "next start",
+		"build": "next build",
+		"export": "next export"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/joeltg/joelgustafson.com.git"
+	},
+	"author": "Joel Gustafson",
+	"license": "UNLICENSED",
+	"bugs": {
+		"url": "https://github.com/joeltg/joelgustafson.com/issues"
+	},
+	"homepage": "https://github.com/joeltg/joelgustafson.com#readme",
+	"dependencies": {
+		"@codemirror/lang-javascript": "^0.19.2",
+		"@codemirror/language": "^0.19.3",
+		"hast-to-hyperscript": "^10.0.1",
+		"hast-util-from-codemirror": "^0.3.0",
+		"next": "^12.0.3",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-markdown": "^7.0.0"
+	},
+	"devDependencies": {
+		"typescript": "^4.4.3"
+	}
+}

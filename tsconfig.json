@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "incremental": true
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}
