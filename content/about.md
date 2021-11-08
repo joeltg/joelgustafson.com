@@ -11,8 +11,8 @@ I'm broadly interested in
 - decentralization
 - offline-first apps and peer-to-peer collaboration
 - what it's like to be online right now
-- ontology, representation, identity, agency, Hannah Arendt, Marshall McLuhan
-- belief, meaning, Simone Weil, Ivan Illich, C.S. Lewis
+- ontology, representation, identity, agency, belief, meaning
+- Hannah Arendt, Marshall McLuhan, Simone Weil, Ivan Illich
 - the pro tennis tour
 
 In 2018 I joined [Protocol Labs](https://protocol.ai/) as an independent research scientist, working with the [Knowledge Futures Group](https://knowledgefutures.org/) on [the Underlay](https://underlay.org/).
