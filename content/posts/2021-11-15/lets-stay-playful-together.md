@@ -1,5 +1,7 @@
 # Let's stay playful together
 
+_November 15, 2021_
+
 What does it mean to play?
 
 One way to answer a question like that is to pose a definition and iterate, comparing it to our intuitions, testing it in specific contexts, and revising when appropriate.
