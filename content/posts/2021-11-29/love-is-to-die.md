@@ -25,7 +25,7 @@ It also matches the "thesis -> antithesis -> synthesis" pattern that I love so m
 
 There's definitely some kind of structure going on here. We've emptied the box and now "love", "dying", and "dancing" are all on the table (plus a bonus "NOT" modifier that nobody knows how to use), and this itself would be meaning enough to last several days. But there's more to it, since Warpaint have gone ahead and arranged them into this little triangle shape for us.
 
-![a diagram with "to die", "to not die", and "to dance" in a triangle](/love-is-to-die-1.png)
+![a diagram with "to die", "to not die", and "to dance" in a triangle](/love-is-to-die-1.svg)
 
 It certainly makes you think.
 
@@ -39,7 +39,7 @@ In the same way, it's understandable for the student to respond with frustration
 
 The diagram here is a little different - instead of stepping through a progression _from_ dying _to_ not dying _to_ dancing, we feel the pressure that dying and not dying exert against each other and use that stress to break up and into into a new dimension.
 
-![another triangle diagram](/love-is-to-die-2.png)
+![another triangle diagram](/love-is-to-die-2.svg)
 
 (it turns out that there is no type of type tectonic fault that looks like this and my image of how volcanoes form was completely wrong)
 
@@ -47,7 +47,7 @@ Speaking of math, we should also talk about numbers. The diagrams I'm drawing ar
 
 Warpaint makes it fit by repeating the top of the triangle to fill out the line: _Love is to dance... Love is to dance and dance_. This makes for (count carefully) _three_ (3) dances! Isn't that so cool!? How did that work out?? Not only do we fit three into four, but we do so by introducing another set of three! If this doesn't excite you I don't know how to help.
 
-![a third variant of the triangle diagram](/love-is-to-die-3.png)
+![a third variant of the triangle diagram](/love-is-to-die-3.svg)
 
 Repeating "dance" has a couple effects. The most significant is that it reinforces the sense of resolution. Having confronted the conflict between the thesis and antithesis, we arrive at the synthesis, and the synthesis has such good vibes that we decide to hang out there for a while. The song has some layering around this part; "to dance and dance" echoes off into the distance. Some say love is still dancing.
 
@@ -55,7 +55,7 @@ But repetition does more than reinforce. Picture this exchange:
 
 ```
 ALICE: So what'd you do at the club last night?
-BOB: I danced. What'd you do?
+BOB:   I danced. What'd you do?
 ALICE: I danced and danced.
 ```
 
