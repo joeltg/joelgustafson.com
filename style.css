@@ -113,6 +113,10 @@ pre > code {
 	padding: 0.5em;
 }
 
+blockquote p {
+	white-space: pre-line;
+}
+
 @media (max-width: 880px) {
 	body {
 		padding: 0 8px;
