@@ -9,7 +9,7 @@ I'm broadly interested in
 - "tools for thought"
 - category theory
 - HTML
-- offline-first apps and p2p collaboration
+- offline and local-first apps, p2p collaboration
 - what it's like to be online right now
 - ontology, representation, identity, agency, belief, meaning
 - Hannah Arendt, Marshall McLuhan, Simone Weil, Ivan Illich
@@ -17,7 +17,10 @@ I'm broadly interested in
 
 ## Projects
 
+- [react-lezer-highlighter](https://github.com/joeltg/react-lezer-highlighter) - a tiny library for syntax highlighting on the Web
+- [zkmessage.xyz](https://zkmessage) - a plausibly deniable group message board
 - [mimc.party](https://mimc.party) - a web tool for calculating MiMC hashes
+- [codemirror-lang-circom](https://github.com/joeltg/codemirror-lang-circom) - CodeMirror integration for the Circom language
 - [next-rest](https://github.com/joeltg/next-rest) - a framework for writing end-to-end typesafe REST APIs for NextJS
 - [nil.directory](https://nil.directory/) - for when you forget what the IPFS hash of the empty directory is
 - [fp16](https://github.com/joeltg/fp16) - 16-bit half-precision floating-point numbers for JavaScript
