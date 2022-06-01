@@ -10,6 +10,8 @@ I put "grammar" in quotes because they're very different from actual formal gram
 
 One downside to mode-based pattern matching is that it is fundamentally a very coarse version of parsing, and getting grammars to distinguish between things like function calls and variable names can be prohibitively complicated. Writing and maintaining these grammars is also a massive pain, because it requires thinking about the syntax of the language in unintuitive ways. [This blog post](https://www.apeth.com/nonblog/stories/textmatebundle.html) is a good summary of just how much cognitive overhead there is in learning to write TexMate grammars, which are what VS Code uses. It doesn't help that the TexMate grammar format is itself largely undocumented.
 
+Here's VS Code team member @alexdima commenting on the limitations of TexMate grammars.
+
 [![a comment on GitHub from a VS Code team member about the limitations of TexMate grammars](</Screenshot 2022-05-31 at 21-13-26.png>)](https://github.com/microsoft/vscode/issues/77140#issue-466517908)
 
 @alexdima also included a screenshot of VS Code's TexMate grammar for TypeScript which is just too funny not to pass on.
