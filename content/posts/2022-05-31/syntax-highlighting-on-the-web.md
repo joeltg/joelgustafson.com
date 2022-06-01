@@ -46,17 +46,19 @@ But mode-based pattern matching is the state of the art on the web anyway. The t
 
 One option would be to just use tree-sitter through WASM; [`web-tree-sitter`](https://www.npmjs.com/package/web-tree-sitter) does exactly this. But although WASM _can_ run anywhere, using it in modern web stacks is still a pain - you have to load the WASM blob, which requires hosting and serving it to browsers, using WASM means waiting for async module initialization, and it makes server-side rendering difficult ([Shiki](https://github.com/shikijs/shiki), another popular web syntax highlighter, uses VS Code's TexMate library compiled to WASM, and [suffers from this limitation](https://github.com/shikijs/shiki/issues/138)).
 
-So ideally we'd have a pure-JavaScript alternative. Fortunately for us, somebody has already done the hard parts! Marijn Haverbeke (The CodeMirror Guy) has completely rewritten CodeMirror from the ground up for [version 6](https://codemirror.net/6/), and spun out as a separate project an adaptation of tree-sitter called [Lezer](https://lezer.codemirror.net/). Lezer is a parser generator system: it has its own syntax for writing `.grammar` files, but uses them to generate zero-dependency pure JavaScript LR parsers. From the [reference page](https://lezer.codemirror.net/docs/guide/):
+So ideally we'd have a pure-JavaScript alternative. Fortunately for us, somebody has already done the hard part! Marijn Haverbeke (The CodeMirror Guy) has completely rewritten CodeMirror from the ground up for [version 6](https://codemirror.net/6/), and spun out as a separate project an adaptation of tree-sitter called [Lezer](https://lezer.codemirror.net/). Lezer is a parser generator system: it has its own syntax for writing `.grammar` files, but uses them to generate zero-dependency pure JavaScript LR parsers. From the [reference page](https://lezer.codemirror.net/docs/guide/):
 
 > This system's approach is heavily influenced by tree-sitter, a similar system written in C and Rust, and several papers by Tim Wagner and Susan Graham on incremental parsing ([1](https://lezer.codemirror.net/docs/guide/ftp.cs.berkeley.edu/sggs/toplas-parsing.ps), [2](https://www.semanticscholar.org/paper/Incremental-Analysis-of-real-Programming-Languages-Wagner-Graham/163592ac3777ee396f32318fcd83b1c563f2e496)). It exists as a different system because it has different priorities than tree-sitter—as part of a JavaScript system, it is written in JavaScript, with relatively small library and parser table size. It also generates more compact in-memory trees, to avoid putting too much pressure on the user's machine.
 
-Lezer parsers are the basis of syntax highlighting and other code analysis features in CodeMirror 6, but are also usable on their own. This is important because although CodeMirror is a fantastically well-engineered piece of software, it is also very opinionated about things — for example, it can't be server-side rendered, interacts with the DOM on its own terms, and requires a bit of boilerplate to use with React. But Lezer is a standalone zero-dependency system that can run anywhere, with or without the rest of CodeMirror.
+(I feel obliged to mention that Marijn's work has been very personally inspiring. The code he writes is incredibly principled and well thought-out; I felt like I connected with a clearer sense of software design just by reading through the CodeMirror 6 codebase.)
+
+Anyway: Lezer parsers are the basis of syntax highlighting and other code analysis features in CodeMirror 6, but are also usable on their own. This is important because although CodeMirror is a fantastically well-engineered piece of software, it is also very opinionated about things — for example, it can't be server-side rendered, interacts with the DOM on its own terms, and requires a bit of boilerplate to use with React. But Lezer is a standalone zero-dependency system that can run anywhere, with or without the rest of CodeMirror.
 
 ---
 
-This means we can use Lezer to build a simple, pure-JavaScript syntax highlighting system for React!
+This means we can use Lezer to build a simple, pure-JavaScript syntax highlighting system for React.
 
-I've released a reference module implementing this as `react-lezer-highlighter` on NPM. Here's the source code!
+I've released a reference module implementing this as [`react-lezer-highlighter`](https://www.npmjs.com/package/react-lezer-highlighter) on NPM. Here's the entire source code!
 
 ```tsx
 import React, { createContext, useContext } from "react"
@@ -124,4 +126,4 @@ export function fromLezer(source: string, tree: Tree): Root {
 }
 ```
 
-Pretty neat! We have a functional synchronous syntax highlighter that works everywhere. I'm using it to render this blog, and you can also [check it out on GitHub](https://github.com/joeltg/react-lezer-highlighter). Feel free to use it in your next project, or just copy the ~100 lines and adapt them as you see fit!
+Pretty neat! We have a functional synchronous syntax highlighter that works everywhere. I'm using it to render this webpage, and you can also [check it out on GitHub](https://github.com/joeltg/react-lezer-highlighter). Feel free to use it in your next project, or just copy the ~100 lines and adapt them as you see fit!
