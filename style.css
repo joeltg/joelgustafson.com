@@ -128,5 +128,6 @@ blockquote p {
 	body {
 		padding: 0 8px;
 		margin-bottom: 2em;
+		-webkit-text-size-adjust: none;
 	}
 }
