@@ -127,5 +127,6 @@ blockquote p {
 @media (max-width: 880px) {
 	body {
 		padding: 0 8px;
+		margin-bottom: 2em;
 	}
 }
