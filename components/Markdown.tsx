@@ -1,45 +1,31 @@
 import React from "react"
 
 import ReactMarkdown from "react-markdown"
-import type { Components } from "react-markdown/lib/ast-to-react"
 
-import { fromCodeMirror } from "hast-util-from-codemirror"
-import { toH } from "hast-to-hyperscript"
+import { Code } from "react-lezer-highlighter"
 
-import type { LRLanguage } from "@codemirror/language"
-import {
-	javascriptLanguage,
-	jsxLanguage,
-	tsxLanguage,
-	typescriptLanguage,
-} from "@codemirror/lang-javascript"
-
-const languages: Record<string, LRLanguage> = {
-	"language-typescript": typescriptLanguage,
-	"language-ts": typescriptLanguage,
-	"language-tsx": tsxLanguage,
-	"language-javascript": javascriptLanguage,
-	"language-js": javascriptLanguage,
-	"language-jsx": jsxLanguage,
+interface CodeProps {
+	inline?: boolean
+	className?: string
+	children: React.ReactNode[]
 }
 
-const components: Components = {
-	code: ({ inline, className, ...props }) => {
-		if (inline) {
+interface ImgProps {
+	src?: string
+	alt?: string
+}
+
+const components = {
+	code(props: CodeProps) {
+		if (props.inline) {
 			return <code>{props.children}</code>
-		} else if (className !== undefined && className in languages) {
-			const source = String(props.children).replace(/\n+$/, "")
-			const { parser } = languages[className]
-			const tree = parser.parse(source)
-			const root = fromCodeMirror(source, tree)
-			const content = toH(React.createElement, root)
-			return <code className={className}>{content}</code>
 		} else {
-			return <code className={className}>{props.children}</code>
+			const source = String(props.children).replace(/\n+$/, "")
+			return <Code language={props.className} source={source} />
 		}
 	},
-	img: ({ src, alt }) => {
-		return <img src={src} alt={alt} />
+	img(props: ImgProps) {
+		return <img srcSet={`${props.src} 2x`} alt={props.alt} />
 	},
 }
 
