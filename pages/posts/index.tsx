@@ -5,8 +5,7 @@ import { readdirSync } from "fs"
 import { resolve } from "path"
 
 import { getTitle, PageProps } from "utils/pages"
-
-type Post = { date: string; slug: string; title: string }
+import Posts, { Post } from "components/Posts"
 
 interface PostIndexPageProps extends PageProps {
 	posts: Post[]
@@ -36,15 +35,11 @@ export const getStaticProps: GetStaticProps<PostIndexPageProps, {}> =
 		return { props: { path: ["posts"], posts, title: "Posts" } }
 	}
 
-export default function PostIndexPage({ posts, ...props }: PostIndexPageProps) {
+export default function PostIndexPage({ posts }: PostIndexPageProps) {
 	return (
 		<>
 			<h1>Posts</h1>
-			{posts.map(({ slug, title, date }) => (
-				<p key={slug}>
-					<em>{date}</em> · <a href={`/posts/${date}/${slug}`}>{title}</a>
-				</p>
-			))}
+			<Posts posts={posts} />
 		</>
 	)
 }
