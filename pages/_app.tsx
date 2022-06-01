@@ -4,8 +4,22 @@ import Head from "next/head"
 
 import type { PageProps } from "utils/pages"
 
-import "hast-util-from-codemirror/styles/default.css"
+import { parser as javascriptParser } from "@lezer/javascript"
+import { parser as lezerParser } from "@lezer/lezer"
+
+import "react-lezer-highlighter/styles/default.css"
 import "../style.css"
+import { Parsers } from "react-lezer-highlighter"
+
+const parsers = {
+	"language-javascript": javascriptParser,
+	"language-js": javascriptParser,
+	"language-jsx": javascriptParser.configure({ dialect: "jsx" }),
+	"language-typescript": javascriptParser.configure({ dialect: "ts" }),
+	"language-ts": javascriptParser.configure({ dialect: "ts" }),
+	"language-tsx": javascriptParser.configure({ dialect: "ts jsx" }),
+	"language-lezer": lezerParser,
+}
 
 export default function App(props: AppProps<PageProps>) {
 	const { Component, pageProps } = props
@@ -14,7 +28,7 @@ export default function App(props: AppProps<PageProps>) {
 		: "Joel Gustafson"
 
 	return (
-		<>
+		<Parsers.Provider value={parsers}>
 			<Head>
 				<title>{title}</title>
 				<link rel="icon" href="/favicon.png" type="image/png" />
@@ -52,6 +66,6 @@ export default function App(props: AppProps<PageProps>) {
 					<Component {...pageProps} />
 				</article>
 			</main>
-		</>
+		</Parsers.Provider>
 	)
 }
