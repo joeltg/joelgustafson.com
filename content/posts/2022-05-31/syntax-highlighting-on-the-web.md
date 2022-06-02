@@ -91,9 +91,9 @@ export const Code: React.FC<CodeProps> = (props) => {
 }
 ```
 
-I personally don't like it when libraries bundle lots of defaults, so here I'm using a React Context called `Parsers` to manually create a registry of Lezer parsers that the `Code` element will use internally.
+I personally don't like it when libraries vendor lots dependencies, so here I'm using a React Context called `Parsers` to that you have to populate yourself with Lezer parsers for the languages that you want to use. You can find the officially-maintained parsers as repos in the [lezer-parser GitHub organization](https://github.com/lezer-parser), search for third-party ones, or write your own.
 
-That `hast-util-from-lezer` library is a separate utility module that performs the parse tree traversal and returns a [HAST](https://github.com/syntax-tree/hast) root. The HAST root it returns could also e.g. be serialized to HTML using [hast-util-to-html](https://github.com/syntax-tree/hast-util-to-html). It produces a flat array of `span` elements each with (possibly several) classnames like `tok-variableName`, `tok-punctuation`, etc that it [gets from Lezer](https://github.com/lezer-parser/highlight/blob/2986163f9570a3b45df8d0c543d138a5a755dcfe/src/highlight.ts#L641). Here's _its_ entire source code:
+That [`hast-util-from-lezer` library](https://github.com/joeltg/hast-util-from-lezer) is a separate utility module that performs the parse tree traversal and returns a [HAST](https://github.com/syntax-tree/hast) root. The HAST root it returns could also e.g. be serialized to HTML using [hast-util-to-html](https://github.com/syntax-tree/hast-util-to-html). It produces a flat array of `span` elements each with (possibly several) classnames like `tok-variableName`, `tok-punctuation`, etc that it [gets from Lezer](https://github.com/lezer-parser/highlight/blob/2986163f9570a3b45df8d0c543d138a5a755dcfe/src/highlight.ts#L641). Here's _its_ entire source code:
 
 ```ts
 import { highlightTree, classHighlighter } from "@lezer/highlight"
