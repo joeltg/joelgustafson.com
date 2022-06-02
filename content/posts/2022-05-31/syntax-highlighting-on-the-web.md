@@ -128,4 +128,4 @@ export function fromLezer(source: string, tree: Tree): Root {
 }
 ```
 
-Pretty neat! We have a functional synchronous syntax highlighter that works everywhere. I'm using it to render this webpage, and you can also [check it out on GitHub](https://github.com/joeltg/react-lezer-highlighter). Feel free to use it in your next project, or just copy the ~100 lines and adapt them as you see fit!
+Pretty neat! We have a functional synchronous syntax highlighter that works everywhere. I'm using it to render this webpage (go ahead and open devtools and look at the classnames on all the tokens in the code blocks!), and you can also [check it out on GitHub](https://github.com/joeltg/react-lezer-highlighter). Feel free to use it in your next project, or just copy the ~100 lines and adapt them as you see fit.
