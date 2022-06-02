@@ -25,7 +25,7 @@ const components = {
 		}
 	},
 	img(props: ImgProps) {
-		return <img srcSet={`${props.src} 2x`} alt={props.alt} />
+		return <img src={props.src} srcSet={`${props.src} 2x`} alt={props.alt} />
 	},
 }
 
