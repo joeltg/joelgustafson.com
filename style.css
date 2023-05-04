@@ -34,13 +34,6 @@
 	--background-color: floralwhite;
 	--main-width: 800px;
 	--text-color-dark: #081b06;
-	/* --text-color-light: #4c5344; */
-	/* --text-color-light: #6d7762; */
-
-	/* #9e9f9c is a nice light gray */
-
-	/* #878e7b is a nice light green */
-	/* --text-color-light: #59624f; */
 	--text-color-light: #878e7b;
 	--border-color: lightgray;
 }
@@ -49,7 +42,7 @@ html {
 	font-family: "Lyon Text", serif;
 	background-color: var(--background-color);
 	color: var(--text-color-dark);
-	font-size: 16px;
+	font-size: 18px;
 }
 
 body {
@@ -68,46 +61,78 @@ article {
 
 h1 {
 	font-weight: normal;
-	font-size: 24px;
+	font-size: 32px;
 }
 
 h2 {
 	font-weight: normal;
+	font-size: 24px;
+	font-style: italic;
+	padding-bottom: 0.25em;
+	border-bottom: 1px solid var(--text-color-dark);
+}
+
+h3 {
+	font-weight: normal;
 	font-size: 20px;
 	font-style: italic;
+	margin-bottom: 0;
+}
+
+h2 > a,
+h3 > a {
+	text-decoration: none;
+	color: var(--text-color-dark);
+}
+
+span.anchor {
+	display: inline-block;
+	position: absolute;
+	margin-left: -1em;
+	visibility: hidden;
+}
+
+a:hover > span.anchor {
+	visibility: visible;
 }
 
 p {
-	line-height: 1.25em;
+	line-height: 1.3em;
 }
 
 img {
 	max-width: 100%;
-	display: block;
+	display: inline-block;
 	margin: auto;
 	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
 }
 
 hr {
 	border-style: solid;
+	border-width: 0.5px;
 	color: lightgray;
 }
 
 code {
-	font-size: 12px;
+	font-size: 14px;
 	font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
 		Liberation Mono, monospace;
 }
 
-p code {
+p code,
+li code {
 	background-color: oldlace;
 	border: 1px solid lightgray;
 	border-radius: 1px;
 	padding: 1px 2px;
 }
 
+li {
+	line-height: 1.25em;
+}
+
 pre {
-	border: 1px solid lightgray;
+	border: 0.5px solid lightgray;
 	border-radius: 1px;
 	background-color: oldlace;
 	overflow-x: auto;
@@ -117,7 +142,14 @@ pre {
 pre > code {
 	display: block;
 	width: max-content;
-	padding: 0.5em;
+	padding: 1em;
+	line-height: 1.25em;
+}
+
+blockquote {
+	border-left: 0.25em solid var(--border-color);
+	margin-left: 0;
+	padding-left: 1em;
 }
 
 blockquote p {
