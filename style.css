@@ -55,6 +55,19 @@ main {
 	max-width: 1024px;
 }
 
+td.date {
+	font-style: italic;
+	white-space: nowrap;
+}
+
+td {
+	vertical-align: baseline;
+}
+
+/* td.date::after {
+	content: " ·";
+} */
+
 article {
 	max-width: 720px;
 }

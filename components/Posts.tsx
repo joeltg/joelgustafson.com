@@ -14,10 +14,8 @@ export default function Posts({ posts }: PostsProps) {
 			<tbody>
 				{posts.map(({ slug, title, date }) => (
 					<tr key={slug}>
-						<td>
-							<em>{date}</em>
-						</td>
-						<td>·</td>
+						<td className="date">{date}</td>
+						<td className="dot">·</td>
 						<td>
 							<a href={`/posts/${date}/${slug}`}>{title}</a>
 						</td>

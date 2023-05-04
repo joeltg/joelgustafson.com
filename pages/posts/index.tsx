@@ -29,11 +29,13 @@ async function getPosts(): Promise<Post[]> {
 	return posts
 }
 
-export const getStaticProps: GetStaticProps<PostIndexPageProps, {}> =
-	async ({}) => {
-		const posts = await getPosts()
-		return { props: { path: ["posts"], posts, title: "Posts" } }
-	}
+export const getStaticProps: GetStaticProps<
+	PostIndexPageProps,
+	{}
+> = async ({}) => {
+	const posts = await getPosts()
+	return { props: { path: ["posts"], posts, title: "Posts" } }
+}
 
 export default function PostIndexPage({ posts }: PostIndexPageProps) {
 	return (
