@@ -1,6 +1,6 @@
 # Syntax highlighting on the web
 
-_2022-05-31_
+[Joel Gustafson](/) · _2022-05-31_
 
 How does syntax highlighting work?
 

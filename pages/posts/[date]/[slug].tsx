@@ -1,8 +1,8 @@
-import React from "react"
-import type { GetStaticPaths, GetStaticProps } from "next"
-
 import { readFileSync, readdirSync } from "fs"
 import { resolve } from "path"
+
+import React from "react"
+import type { GetStaticPaths, GetStaticProps } from "next"
 
 import Markdown from "components/Markdown"
 
@@ -34,21 +34,23 @@ export const getStaticPaths: GetStaticPaths<PostPageParams> = async ({}) => {
 	return { paths: Array.from(getPaths()), fallback: false }
 }
 
-export const getStaticProps: GetStaticProps<PostPageProps, PostPageParams> =
-	async (context) => {
-		if (context.params === undefined) {
-			return { notFound: true }
-		}
-
-		const { date, slug } = context.params
-		const file = resolve("content", "posts", date, `${slug}.md`)
-		const source = readFileSync(file, "utf-8")
-		const title = await getTitle(file)
-
-		return {
-			props: { path: ["posts", date, slug], source, date, title },
-		}
+export const getStaticProps: GetStaticProps<
+	PostPageProps,
+	PostPageParams
+> = async (context) => {
+	if (context.params === undefined) {
+		return { notFound: true }
 	}
+
+	const { date, slug } = context.params
+	const file = resolve("content", "posts", date, `${slug}.md`)
+	const source = readFileSync(file, "utf-8")
+	const title = await getTitle(file)
+
+	return {
+		props: { path: ["posts", date, slug], source, date, title },
+	}
+}
 
 export default function PostPage({ source }: PostPageProps) {
 	return <Markdown source={source} />
