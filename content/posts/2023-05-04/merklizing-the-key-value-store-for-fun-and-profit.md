@@ -37,7 +37,7 @@ We'll give a short overview of merkle trees in general, walk through the design 
 
 If you’re already a merkle tree guru and the prospect of using them to efficiently diff key/value stores seems natural to you, feel free to skip this section.
 
-Merkle tree are simpler than they sound. It just describes a tree whose nodes have been labelled with hashes. The leaves have the hash of their “value” (whatever that means for that particular tree), and **every parent node has the hash of the hashes of its children**. This means merkle trees have to be built from the leaves up, since the hashes at each layer depend on the hashes of the layer below.
+Merkle trees are simpler than they sound. It just describes a tree whose nodes have been labelled with hashes. The leaves have the hash of their “value” (whatever that means for that particular tree), and **every parent node has the hash of the hashes of its children**. This means merkle trees have to be built from the leaves up, since the hashes at each layer depend on the hashes of the layer below.
 
 ![Component 18](./Component%2018.png)
 
@@ -280,21 +280,13 @@ Let’s pivot back to theory and consider the inductive case of updating the has
 
 Notice how cool it is that we’ve recovered “splitting” and “merging” - familiar operations in balancing traditional mutable trees - from analyzing our deterministic bottom-up tree building algorithm! We wouldn’t necessarily expect an arbitrary such algorithm to give rise to persistent node identity at all.
 
-The trailing nodes we see changing at each level are artifacts of splits, and the large triangular wake in frame 44 is an artifact of repeated splits. Here’s frame 43 and 44 side-by-side.
+The extra nodes we see changing at each level are artifacts of splits, and the large triangular wake in frame 44 is an artifact of repeated splits. Here’s frame 43 and 44 side-by-side.
 
 <img width="350" alt="64-random-big-43.png" src="./64-random-big-43.png"/>
 
 <img width="350" alt="64-random-big-44.png" src="./64-random-big-44.png" />
 
-<!-- ![64-random-big-43.png](./64-random-big-43.png)
-
-![64-random-big-44.png](./64-random-big-44.png) -->
-
-The update to the entry at key `0x0030` caused its parent split, which also caused its grandparent to split.
-
-> Splits can propagate backwards, but only happen with probability 1/Q, and are limited in range by a maximum of one step per level.
-
-“One step per level” is what gives the splash of changes that triangle shape. The worst case is that this continues until it hits the edge or the root.
+The update to the entry at key `0x0030` caused its parent split, which also caused its grandparent to split. Splits can propagate backwards, but only happen with probability 1/Q, and are limited in range by a maximum of one step per level.
 
 Quantifying the exact number of expected splits caused by a change is... hard. In a tree with `n` leaf entries, we expect a path of `log_Q(n)+1` nodes from the leaf to the root, of which `1` in `Q` are boundaries and the other `Q-1` in `Q` aren’t. A split happens when a non-boundary node becomes a boundary, and has conditional probability `1/Q`, so we expect _at least_ `(log_Q(n)+1) * ((Q-1)/Q) * (1/Q)`. Splits create new parents that might themselves induce further splits, so the real number is a little more, but we also run out of space when we hit the anchor edge of the tree, so propagation is bounded by that as well. In the end, it’s something on the order of `(log_Q(n)+1)/Q`.
 
@@ -348,13 +340,41 @@ deleted    |        0.189 |  0.475
 
 NICE. Making a random change in our key/value store with 16 million entries only requires changing a little less than 7 merkle tree nodes on average.
 
-One final property to highlight: we know for sure that changes within a subtree can never affect the subtrees to its right. So, in the original big skip-list diagram with keys `a:foo` through `m:...` with a 3-node tower at `g`, no amount of inserting, updating, or deleting entries _before_ `g:...` will change the way the entries `g:...` through `m:...` organize into the subtree under `(3, "g")`. This is not a trivial property! It’s only true because our boundary condition is “stateless”; each node determines its own boundary status independently of its siblings. In particular, if we had used a rolling hash for determining boundaries at each level, this wouldn’t hold.
+One final property to highlight: we know for sure that changes within a subtree can never affect the subtrees to its right. Here's the example tree again:
+
+```
+            ╔════╗
+ level 4    ║root║
+            ╚════╝
+              │
+              ▼
+            ╔════╗                                                               ┌─────┐
+ level 3    ║null║ ─────────────────────────────────────────────────────────────▶│  g  │
+            ╚════╝                                                               └─────┘
+              │                                                                     │
+              ▼                                                                     ▼
+            ╔════╗                                                               ╔═════╗                                                     ┌─────┐
+ level 2    ║null║ ─────────────────────────────────────────────────────────────▶║  g  ║   ─────────────────────────────────────────────────▶│  m  │
+            ╚════╝                                                               ╚═════╝                                                     └─────┘
+              │                                                                     │                                                           │
+              ▼                                                                     ▼                                                           ▼
+            ╔════╗             ┌─────┐   ┌─────┐                                 ╔═════╗             ┌─────┐                                 ╔═════╗
+ level 1    ║null║────────────▶│  b  │──▶│  c  │────────────────────────────────▶║  g  ║────────────▶│  i  │────────────────────────────────▶║  m  ║
+            ╚════╝             └─────┘   └─────┘                                 ╚═════╝             └─────┘                                 ╚═════╝
+              │                   │         │                                       │                   │                                       │
+              ▼                   ▼         ▼                                       ▼                   ▼                                       ▼
+            ╔════╗   ┌─────┐   ╔═════╗   ╔═════╗   ┌─────┐   ┌─────┐   ┌─────┐   ╔═════╗   ┌─────┐   ╔═════╗   ┌─────┐   ┌─────┐   ┌─────┐   ╔═════╗   ┌─────┐
+ level 0    ║null║──▶│a:foo│──▶║b:bar║──▶║c:baz║──▶│d:...│──▶│e:...│──▶│f:...│──▶║g:...║──▶│h:...│──▶║i:...║──▶│j:...│──▶│k:...│──▶│l:...│──▶║m:...║──▶│n:...│
+            ╚════╝   └─────┘   ╚═════╝   ╚═════╝   └─────┘   └─────┘   └─────┘   ╚═════╝   └─────┘   ╚═════╝   └─────┘   └─────┘   └─────┘   ╚═════╝   └─────┘
+```
+
+No amount of inserting, updating, or deleting entries _before_ `g:...` will change the way the entries `g:...` through `m:...` organize into the subtree under `(3, "g")`. This is not a trivial property! It’s only true because our boundary condition is stateless; each node determines its own boundary status independently of its siblings. In particular, if we had used a rolling hash over a window of nodes for determining boundaries at each level, this wouldn’t hold.
 
 ### Key/value stores all the way down
 
 All that we have so far is a logical description of a tree structure, and a vague promise that augmenting the _logically flat_ key/value interface with this fancy merkle tree will unlock some interesting syncing capabilities. But how are we actually implementing this?
 
-Key/value stores are typically just B-trees, designed to fit real-world platform constraints like a glove. If we take the task of “merklizing the key/value store” literally and try to pack our tree directly into pages on-disk, we quickly find that there’s inherent conflict between practical B-tree design and the deterministic pseudo-random structure we derived. The most prominent example of this is that even though we can set `Q` to control the _average_ fanout degree, there’s no hard upper limit on how many children a node might end up with, while a basic principle of B-trees is to work strictly inside 4096-byte pages. Maybe we could go back and revise our structure, but then we’re playing a game of tradeoffs, making an already-complicated B-tree even more complicated.
+Key/value stores are typically just B-trees, designed around real-world platform constraints. If we take the task of “merklizing the key/value store” literally and try to pack our tree directly into pages on-disk, we quickly find that there’s inherent conflict between practical B-tree design and the deterministic pseudo-random structure we derived. The most prominent example of this is that even though we can set `Q` to control the _average_ fanout degree, there’s no hard upper limit on how many children a node might end up with, while a basic principle of B-trees is to work strictly inside 4096-byte pages. Maybe we could go back and revise our structure, but then we’re playing a game of tradeoffs, making an already-complicated B-tree even more complicated.
 
 Fortunately, there’s an easier way.
 
@@ -362,7 +382,7 @@ We take an existing key/value store and project the tree structure onto it. This
 
 - the first byte of every internal key is the `level: u8` of the node
 - the rest of of the internal key `key[1..]` is the (external) key of the node’s _first leaf entry_
-- the first `K` bytes of the every internal value are the node’s hash
+- the first `K` bytes of the internal value are the node’s hash
 - leaf nodes store their external value after the hash, in the remaining bytes `value[K..]` of the internal value
 
 The most interesting aspect of this mapping is that no parent-to-child or sibling-to-sibling links have to be explicitly represented, since those traversals can be done using the underlying key/value store with the information already present in each node. Given a parent `(l, k)`, we know its first child has internal key `[l-1, ...k]`. How about sibling iteration? Easy! We iterate over internal entries, breaking when the next internal key has the wrong level byte or when the next entry’s hash (internal `value[0..K]`) is less than `2^32/Q`, since that means it’s the first child of the next parent. Another serendipitous benefit of content-defined chunking!
@@ -444,9 +464,9 @@ function sync(source: Source, target: Target): AsyncIterable<Delta> {
 
 `sourceValue` and `targetValue` are never both `null`, and they’re never both the same `Uint8Array` value.
 
-The actual implementation of `sync` is a depth-first traversal of `source` that skips common subtrees when it finds them, plus some careful handling of a cursor in the target tree’s range. You can see it in ~200 lines of TypeScript here.
+The actual implementation of `sync` is a depth-first traversal of `source` that skips common subtrees when it finds them, plus some careful handling of a cursor in the target tree’s range. You can see it in ~200 lines of TypeScript [here](https://github.com/canvasxyz/okra-js/blob/main/packages/okra/src/driver.ts).
 
-It turns out that this this low-level `Delta` iterator an incredibly versatile primitive, with at least three distinct usage patterns.
+It turns out that this this low-level `Delta` iterator is an incredibly versatile primitive, with at least three distinct usage patterns.
 
 ### Single-source-of-truth replication
 
@@ -637,4 +657,6 @@ I don’t know enough about either database internals or distributed systems to 
 
 One future direction that I’m excited to explore is packaging Okra as a SQLite plugin. I think it could work as a custom index that you can add to any table to make it “syncable”, in any of the three replicate/union/merge usage patterns, with instance of the table in anyone else’s database.
 
-More generally, I’m constantly impressed by the unreasonable utility of merklizing things. As always, the friction is around mutability and identity, but pushing through those headwinds seems to consistently deliver serendipitous benefits beyond the initial goals. We’re used to thinking of “content-addressing” as an overly fancy way of saying “I hashed a file” (or at least I was), but I’m coming around to seeing a much deeper design principle that we can to integrate into the lowest levels of the stack. You can merklize a database _index_, and find that it unlocks a crazy new set of peer-to-peer primitives.
+More generally, I find myself constantly impressed by the unreasonable utility of merklizing things. As always, the friction is around mutability and identity, but pushing through those headwinds seems to consistently deliver serendipitous benefits beyond the initial goals. We’re used to thinking of “content-addressing” as an overly fancy way of saying “I hashed a file” (or at least I was), but I’m coming around to seeing a much deeper design principle that we can to integrate into the lowest levels of the stack. You can merklize a database _index_, and find that it unlocks a crazy new set of peer-to-peer primitives.
+
+_Many thanks to Colin McDonnell, Ian Reynolds, Lily Jordan, Kevin Kwok, and Raymond Zhong for their feedback._
