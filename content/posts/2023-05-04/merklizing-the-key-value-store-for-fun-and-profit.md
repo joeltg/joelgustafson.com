@@ -374,7 +374,7 @@ No amount of inserting, updating, or deleting entries _before_ `g:...` will chan
 
 All that we have so far is a logical description of a tree structure, and a vague promise that augmenting the _logically flat_ key/value interface with this fancy merkle tree will unlock some interesting syncing capabilities. But how are we actually implementing this?
 
-Key/value stores are typically just B-trees, designed around real-world platform constraints. If we take the task of “merklizing the key/value store” literally and try to pack our tree directly into pages on-disk, we quickly find that there’s inherent conflict between practical B-tree design and the deterministic pseudo-random structure we derived. The most prominent example of this is that even though we can set `Q` to control the _average_ fanout degree, there’s no hard upper limit on how many children a node might end up with, while a basic principle of B-trees is to work strictly inside 4096-byte pages. Maybe we could go back and revise our structure, but then we’re playing a game of tradeoffs, making an already-complicated B-tree even more complicated.
+Key/value stores are typically just B-trees, designed around real-world platform constraints. If we take the task of “merklizing the key/value store” literally and try to pack our tree directly into pages on-disk, we quickly find that there’s inherent conflict between practical B-tree design and the deterministic pseudo-random structure we derived. For example, even though we can set `Q` to control the _average_ fanout degree, there’s no hard upper limit on how many children a node might end up with, but a basic principle of B-trees is to work strictly inside 4096-byte pages. Maybe we could go back and revise our structure, but then we’re playing a game of tradeoffs, making an already-complicated B-tree even more complicated.
 
 Fortunately, there’s an easier way.
 
@@ -389,7 +389,7 @@ The most interesting aspect of this mapping is that no parent-to-child or siblin
 
 Decoupling the two trees lets them each do what they do best. Internally, the underlying key/value store can pack whichever entries into whichever pages it wants, with no regard for the merkle-level node boundaries, keeping empty slots for future insertions, and so on. Every update, split, and merge translates directly to a single set or delete of an internal key/value entry. This does mean that the overall asymptotic complexity gets bumped up a logarithmic notch, since every external operation translates into `log_Q(n)` internal operations.
 
-Implementing the external set/delete operations involves setting or deleting the corresponding leaf node and then propagating up the levels, splitting, merging, or updating the intermediate nodes as needed. There are a few painful edge cases that make this non-trivial, but our TypeScript and Zig reference implementations are both able to do it in ~500 careful lines of code.
+Implementing the external set/delete operations involves setting or deleting the corresponding leaf node and then propagating up the levels, splitting, merging, or updating the intermediate nodes as needed. There are a few tricky edge cases that make this non-trivial, but our TypeScript and Zig reference implementations are both able to do it in ~500 careful lines of code.
 
 ## Applications
 
