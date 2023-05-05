@@ -661,4 +661,4 @@ More generally, I find myself constantly impressed by the unreasonable utility o
 
 Overall it seems like there's an emerging vision of a lower-level type of decentralization, where the data structures themselves sync directly with each other. The modern computer has hundreds of databases of various kinds for various apps at all times - what if the application layer didn’t have to mediate sync and replication logic at all? What if you could make a social app without writing a single line of networking code?
 
-_Many thanks to Colin McDonnell, Ian Reynolds, Lily Jordan, Kevin Kwok, and Raymond Zhong for their feedback._
+_Many thanks to Colin McDonnell, Ian Reynolds, Lily Jordan, Kevin Kwok, and Raymond Zhong for their help in editing._
