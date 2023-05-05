@@ -286,7 +286,7 @@ The extra nodes we see changing at each level are artifacts of splits, and the l
 
 <img width="350" alt="64-random-big-44.png" src="./64-random-big-44.png" />
 
-The update to the entry at key `0x0030` caused its parent split, which also caused its grandparent to split. Splits can propagate backwards, but only happen with probability 1/Q, and are limited in range by a maximum of one step per level.
+The update to the entry at key `0x0030` caused its parent split, which also caused its grandparent to split. Splits can propagate backwards, but only happen with probability 1/Q.
 
 Quantifying the exact number of expected splits caused by a change is... hard. In a tree with `n` leaf entries, we expect a path of `log_Q(n)+1` nodes from the leaf to the root, of which `1` in `Q` are boundaries and the other `Q-1` in `Q` aren’t. A split happens when a non-boundary node becomes a boundary, and has conditional probability `1/Q`, so we expect _at least_ `(log_Q(n)+1) * ((Q-1)/Q) * (1/Q)`. Splits create new parents that might themselves induce further splits, so the real number is a little more, but we also run out of space when we hit the anchor edge of the tree, so propagation is bounded by that as well. In the end, it’s something on the order of `(log_Q(n)+1)/Q`.
 
@@ -456,7 +456,7 @@ function sync(source: Source, target: Target): AsyncIterable<Delta> {
 }
 ```
 
-`sync` uses the methods in the `Source` and `Target` interfaces to yield `Delta` objects for every key-wise difference between the source and target leaf entries. This format generalizes the three kinds of “differences” there can be between key/value stores:
+`sync` uses the methods in the `Source` and `Target` interfaces to yield `Delta` objects for every key-wise difference between the source and target leaf entries. This format generalizes the three kinds of differences there can be between key/value stores:
 
 1. `sourceValue !== null && targetValue === null` means the source tree has an entry for `key` but the target tree doesn’t.
 2. `sourceValue === null && targetValue !== null` means the target tree has an entry for `key` but the source tree doesn’t.
@@ -507,9 +507,11 @@ for await (const { key, sourceValue, targetValue } of sync(source, target)) {
 }
 ```
 
-It’s just a minor variation of the last example, but this time it’s not something `rsync` could help us with. After completing a sync, Bob is guaranteed to have the union of his and Alice’s events. And Alice can flip it around and initiate the same kind of sync with Bob whenever she wants to check for events she might have missed!
+It’s just a minor variation of the last example, but this time it’s not something `rsync` could help us with. Bob doesn’t want to lose the events the he has that Alice doesn’t, and `rsync` would overwrite them all. Bob wants to end up with the union of his and Alice's events, so he needs to use our async delta iterator. And when he's done, Alice can flip it around and initiate the same kind of sync with Bob to check for events she might have missed!
 
-Today, the standard approach to this problem is to use version vectors (not to be confused with vector clocks), but that requires events to have a user ID, requires each user to persist their own version number, and produces vectors linear in the total number of users _to ever participate_. In many systems, this is fine and even natural, but it can be awkward in others that have lots of transient users or are supposed to be anonymous. Why couple retrieval with attribution if you don’t have to? Merkle sync lets us achieve the same thing while treating the events themselves as completely opaque blobs.
+Today, one standard approach to this problem is to use [version vectors](https://en.wikipedia.org/wiki/Version_vector) (not to be confused with [vector clocks](https://en.wikipedia.org/wiki/Vector_clock)), but that requires events to have a user ID, requires each user to persist their own version number, and produces vectors linear in the total number of users _to ever participate_. In many systems, this is fine and even natural, but it can be awkward in others that have lots of transient users or are supposed to be anonymous. Why couple retrieval with attribution if you don’t have to? Merkle sync lets us achieve the same thing while treating the events themselves as completely opaque blobs.
+
+![Screenshot 2023-05-04 at 9.54.41 PM.png](./Screenshot%202023-05-04%20at%209.54.41%20PM.png) ![Screenshot 2023-05-04 at 9.58.55 PM.png](./Screenshot%202023-05-04%20at%209.58.55%20PM.png)
 
 (And what if retrieving a specific event fails? If Eve skips a version number, does Bob keep asking people for it until the end of time?)
 
@@ -517,7 +519,7 @@ Today, the standard approach to this problem is to use version vectors (not to b
 
 It’s cool that merkle sync can implement grow-only sets and single-source-of-truth replication, and they’re real-world use cases, but neither are “peer-to-peer databases” in a true sense. What if we want multi-writer _and_ mutability?
 
-Merkle sync doesn’t magically get us all the way there, but it brings us close. The last and most powerful pattern that Alice and Bob can use is to establish a _merge_ function to use to resolve conflicts.
+Merkle sync doesn’t magically get us all the way there, but it brings us close. You can use it to merge concurrent versions of two databases, but you need your own way to resolve conflicts between values.
 
 ```tsx
 // `merge` is an application-specific value resolver,
@@ -529,8 +531,6 @@ declare function merge(
 	targetValue: Uint8Array
 ): Uint8Array
 
-// Bob has a local tree `target: Target` and a
-// client connection `source: Source` to Alice
 for await (const { key, sourceValue, targetValue } of sync(source, target)) {
 	if (sourceValue === null) {
 		continue
@@ -593,9 +593,9 @@ What we’ve essentially implemented is a toy state-based CRDT, which is a whole
 
 ### Concurrency constraints
 
-The concerned reader might be worry about mutating the target tree mid-sync. Mutations can cause splits and merges at any level - will this interfere with the ongoing depth-first traversal? Fortunately, this is actually fine, specifically due to the property that mutations in any subtree never affect the subtrees to their right. The target tree can always safely create, update, or delete entries for the current delta’s key.
+You might be worried about operating on the target tree mid-sync. Operations can cause splits and merges at any level - will this interfere with the ongoing depth-first traversal? Fortunately, this is actually fine, specifically due to the property that mutations in any subtree never affect the subtrees to their right. The target tree can always safely create, update, or delete entries for the current delta’s key.
 
-Unfortunately, the same can’t be said for the source tree. The source needs to present a **stable snapshot** to the target throughout the course of a single sync, since the intermediate nodes (e.g. returned by `getChildren`) are liable to disappear after any mutation. This means syncing needs to happen inside of some kind of explicit session so that the source can acquire and release the appropriate locks or open and close a read-only snapshot.
+Unfortunately, the same can’t be said for the source tree. The source needs to present a **stable snapshot** to the target throughout the course of a single sync, since the intermediate nodes are liable to disappear after any mutation. This means syncing needs to happen inside of some kind of explicit session so that the source can acquire and release the appropriate locks or open and close a read-only snapshot.
 
 ## Implementations
 
@@ -605,7 +605,7 @@ Okra is written in Zig, using [LMDB](http://www.lmdb.tech/doc/index.html) as the
 
 Okra can be used as a compiled library, directly by another Zig project via git submodules (internal structs documented [here](https://github.com/canvasxyz/okra/blob/main/API.md)), or via the first-party native NodeJS bindings. The NodeJS bindings are simple wrappers that expose `Tree`, `Transaction`, and `Cursor` as JS classes. You can build these yourself with `cd node-api && make`, which assumes `/usr/local/include/node` exists. Alternatively, precompiled bindings are published on NPM as `@canvas-js/okra-node` and should work on all x64/arm64 MacOS/linux-glibc/linux-musl platforms. The NodeJS classes are documented in [okra/node-api/README.md](https://github.com/canvasxyz/okra/tree/main/node-api).
 
-Okra also has a CLI can be built with `zig build cli` after installing Zig and fetching the submodules. The CLI is most useful for visualizing the state of the merkle tree, but can also be used for getting, setting, and deleting entries. Keys and values can be provided as either hex or utf-8. Detailed documentation and options are available via the `--help` flag.
+Okra also has a CLI, which can be built with `zig build` after installing Zig and fetching the submodules. The CLI is most useful for visualizing the state of the merkle tree, but can also be used for getting, setting, and deleting entries.
 
 As a wrapper around LMDB, Okra has fully ACID transactions with `get(key)`, `set(key, value)`, and `delete(key)` methods, plus a read-only iterator interface that you can use to move around the merkle tree and access hashes of the merkle nodes. Only one read-write transaction can be open at a time, but any number of read-only transactions can be opened at any time and held open for as long as necessary at the expense of temporarily increased size on-disk (LMDB is copy-on-write and will only re-use stale blocks after all transactions referencing them are closed). The Zig implementation does not implement `sync`, since syncing is async and so closely tied to choice of network transport.
 
@@ -639,24 +639,24 @@ The NPM packages `@canvas-js/okra-idb` and `@canvas-js/okra-memory` instantiate 
 
 ## Conclusions
 
-I’ll step into the first person for a friendly conclusion. I started looking into merklized key/value stores last summer in search of a reliable persistence layer to complement libp2p’s GossipSub, and found that variants of deterministic pseudo-random merkle trees were an active early research area. I was ecstatic.
+I’ll step into the first person for a friendly conclusion. I started looking into merklized databases last summer in search of a reliable persistence layer to complement libp2p’s GossipSub, and found that variants of deterministic pseudo-random merkle trees were an active early research area. I was ecstatic.
 
 The [original paper on Merkle Search Trees](https://inria.hal.science/hal-02303490/document) (MSTs) describes something very different than the approach I ended up pursuing. MSTs are more like classical B-Trees where the intermediate nodes store values too: each key/value entry’s hash determines its level in the tree, and nodes interleave values with pointers to nodes at the level below. It’s actually quite complicated.
 
 ![Screenshot 2023-05-01 at 5.25.27 PM.png](./Screenshot_2023-05-01_at_5.25.27_PM.png)
 
-_Prolly Tree_ seems to be the consensus name for the bottom-up/dynamic chunking approach. I first saw the idea described in [this blog post](https://0fps.net/2020/12/19/peer-to-peer-ordered-search-indexes/), but it appears to have originated in the now-dead project [attic-labs/noms](https://github.com/attic-labs/noms). [Dolt](https://github.com/dolthub/dolt), a relational database with git-like characteristics, has a [great blog post about Prolly Trees](https://www.dolthub.com/blog/2022-06-27-prolly-chunker/) that spends a lot of time focusing on ways to tune the chunk size distribution. You may have wondered about why the `u32(node.hash[0..4]) < 2^32/Q` condition gives us parents with `Q` children on average - it does, but in a geometric distribution with more smaller chunks than bigger chunks. Dolt took on the challenge of implementing a native Prolly Tree directly on-disk, so they reworked the chunk boundary condition to get chunks to fit more consistently into 4096-byte pages, transforming the distribution on the left into the distribution on the right.
+_Prolly Tree_ seems to be the consensus name for the bottom-up/dynamic chunking approach. I first saw the idea described in [this blog post](https://0fps.net/2020/12/19/peer-to-peer-ordered-search-indexes/), but it appears to have originated in the now-dead project [attic-labs/noms](https://github.com/attic-labs/noms). [Dolt](https://github.com/dolthub/dolt), a relational database with git-like characteristics, has a [great blog post about Prolly Trees](https://www.dolthub.com/blog/2022-06-27-prolly-chunker/) that spends a lot of time focusing on ways to tune the chunk size distribution. Our naive `u32(node.hash[0..4]) < 2^32/Q` condition gives us parents with `Q` children on average, but in a geometric distribution with more smaller chunks than bigger chunks. Dolt took on the challenge of implementing a native Prolly Tree directly on-disk, so they reworked the chunk boundary condition to get chunks to fit more consistently into 4096-byte pages, transforming the distribution on the left into the distribution on the right.
 
 ![Screenshot 2023-05-01 at 17-45-57 How to Chunk Your Database into a Merkle Tree.png](./Screenshot_2023-05-01_at_17-45-57_How_to_Chunk_Your_Database_into_a_Merkle_Tree.png) ![Screenshot 2023-05-01 at 17-46-01 How to Chunk Your Database into a Merkle Tree.png](./Screenshot_2023-05-01_at_17-46-01_How_to_Chunk_Your_Database_into_a_Merkle_Tree.png)
 
 > A simple solution is to use the size of the current chunk as an input into the chunking function. The intuition is simple: if the probability of chunk boundary increases with the size of the current chunk, we will reduce the occurrence of both very-small and very-large chunks.
 
-This was something I planned to do, but shelved as the prospect of working on top of existing key/value stores came into focus. As far as I can tell, Okra’s generic key/value backend is a novel approach, and hinges on the specific way the fixed anchors give nodes stable `(level, key)` identifiers.
+This was something I planned to do, but shelved as the prospect of working on top of existing key/value stores came into focus. As far as I can tell, Okra’s generic key/value backend is a novel approach, and hinges on the specific way the fixed anchors give nodes stable `(level, key)` identifiers. Or maybe just rotating the tree 45 degrees, I can't really tell.
 
 I don’t know enough about either database internals or distributed systems to thoroughly compare the trade-offs between the Okra way and a full-fledged on-disk Prolly Tree. I’m really happy with how easy Okra was to implement, especially in the browser context over a single IndexedDB object store, and personally place a high value on that kind of simplicity as long as it meets my needs. But I also know that lots of serious engineering went into Dolt and would bet it performs better at scale. Another major aspect of Dolt’s implementation is that it has git-like time-travel. Like LMDB, Dolt is copy-on-write, but it keeps the old blocks around so that it can access any historical snapshot by root hash.
 
-One future direction that I’m excited to explore is packaging Okra as a SQLite plugin. I think it could work as a custom index that you can add to any table to make it “syncable”, in any of the three replicate/union/merge usage patterns, with instance of the table in anyone else’s database.
+One future direction that I’m excited to explore is packaging Okra as a SQLite plugin. I think it could work as a custom index that you can add to any table to make it “syncable”, in any of the three replicate/union/merge usage patterns, with another instance of the table in anyone else’s database.
 
-More generally, I find myself constantly impressed by the unreasonable utility of merklizing things. As always, the friction is around mutability and identity, but pushing through those headwinds seems to consistently deliver serendipitous benefits beyond the initial goals. We’re used to thinking of “content-addressing” as an overly fancy way of saying “I hashed a file” (or at least I was), but I’m coming around to seeing a much deeper design principle that we can to integrate into the lowest levels of the stack. You can merklize a database _index_, and find that it unlocks a crazy new set of peer-to-peer primitives.
+More generally, I find myself constantly impressed by the unreasonable utility of merklizing things. As always, the friction is around mutability and identity, but pushing through those headwinds seems to consistently deliver serendipitous benefits beyond the initial goals. We’re used to thinking of “content-addressing” as an overly fancy way of saying “I hashed a file” (or at least I was), but I’m coming around to seeing a much deeper design principle that we can integrate into the lowest levels of the stack. You can merklize a database _index_, and find that it unlocks a crazy new set of peer-to-peer primitives.
 
 _Many thanks to Colin McDonnell, Ian Reynolds, Lily Jordan, Kevin Kwok, and Raymond Zhong for their feedback._
