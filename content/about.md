@@ -34,6 +34,8 @@ I'm broadly interested in
 
 ## Work
 
+I'm currently building [Canvas](https://canvas.xyz), a framework for building peer-to-peer applications using decentralized replicated causal logs.
+
 In 2018 I joined [Protocol Labs](https://protocol.ai/) as an independent research scientist, working with the [Knowledge Futures Group](https://knowledgefutures.org/) on [the Underlay](https://underlay.org/).
 
 In summer 2017 I interned at [Notion](https://notion.so/) in the run-up to the Notion 2.0 launch that introduced tables and databases. I designed and implemented the DSL, runtime, editor, and documentation for formulas.
