@@ -595,47 +595,17 @@ What we’ve essentially implemented is a toy state-based CRDT, which is a whole
 
 You might be worried about operating on the target tree mid-sync. Operations can cause splits and merges at any level - will this interfere with the ongoing depth-first traversal? Fortunately, this is actually fine, specifically due to the property that mutations in any subtree never affect the subtrees to their right. The target tree can always safely create, update, or delete entries for the current delta’s key.
 
-Unfortunately, the same can’t be said for the source tree. The source needs to present a **stable snapshot** to the target throughout the course of a single sync, since the intermediate nodes are liable to disappear after any mutation. This means syncing needs to happen inside of some kind of explicit session so that the source can acquire and release the appropriate locks or open and close a read-only snapshot.
+Unfortunately, the same can’t be said for the source tree. The source needs to present a **fixed snapshot** to the target throughout the course of a single sync, since the intermediate nodes are liable to disappear after any mutation. This means syncing needs to happen inside of some kind of explicit session so that the source can acquire and release the appropriate locks or open and close a read-only snapshot.
 
 ## Implementations
 
-The animations and tests we saw in previous sections were run on a reference implementation called [Okra](https://github.com/canvasxyz/okra).
-
-Okra is written in Zig, using [LMDB](http://www.lmdb.tech/doc/index.html) as the underlying key/value store. Its basic data structures are `Tree`, `Transaction`, and `Cursor`. Internally, all three are generic structs parametrized by two comptime values `K: u8` and `Q: u32`; `K` is the size in bytes of the internal Blake3 hashes. These have default values **`K = 16`** and **`Q = 32`**, but anyone could import the generic types and instantiate them with different settings.
-
-Okra can be used as a compiled library, directly by another Zig project via git submodules (internal structs documented [here](https://github.com/canvasxyz/okra/blob/main/API.md)), or via the first-party native NodeJS bindings. The NodeJS bindings are simple wrappers that expose `Tree`, `Transaction`, and `Cursor` as JS classes. You can build these yourself with `cd node-api && make`, which assumes `/usr/local/include/node` exists. Alternatively, precompiled bindings are published on NPM as `@canvas-js/okra-node` and should work on all x64/arm64 MacOS/linux-glibc/linux-musl platforms. The NodeJS classes are documented in [okra/node-api/README.md](https://github.com/canvasxyz/okra/tree/main/node-api).
-
-Okra also has a CLI, which can be built with `zig build` after installing Zig and fetching the submodules. The CLI is most useful for visualizing the state of the merkle tree, but can also be used for getting, setting, and deleting entries.
+The animations and tests we saw in previous sections were run on a reference implementation called [Okra](https://github.com/canvasxyz/okra). Okra is written in Zig, using [LMDB](http://www.lmdb.tech/doc/index.html) as the underlying key/value store.
 
 As a wrapper around LMDB, Okra has fully ACID transactions with `get(key)`, `set(key, value)`, and `delete(key)` methods, plus a read-only iterator interface that you can use to move around the merkle tree and access hashes of the merkle nodes. Only one read-write transaction can be open at a time, but any number of read-only transactions can be opened at any time and held open for as long as necessary at the expense of temporarily increased size on-disk (LMDB is copy-on-write and will only re-use stale blocks after all transactions referencing them are closed). The Zig implementation does not implement `sync`, since syncing is async and so closely tied to choice of network transport.
 
-We also have a compatible implementation in pure TypeScript at [canvasxyz/okra-js](https://github.com/canvasxyz/okra-js), which can be used with any backend satisfying an abstract `KeyValueStore` interface.
+Okra also has a CLI, which can be built with `zig build cli` after installing Zig and fetching the submodules. The CLI is most useful for visualizing the state of the merkle tree, but can also be used for getting, setting, and deleting entries.
 
-```tsx
-type Bound = { key: Uint8Array; inclusive: boolean }
-
-interface KeyValueStore {
-	get(key: Uint8Array): Promise<Uint8Array | null>
-	set(key: Uint8Array, value: Uint8Array): Promise<void>
-	delete(key: Uint8Array): Promise<void>
-	entries(
-		lowerBound?: Bound | null,
-		upperBound?: Bound | null,
-		options?: { reverse?: boolean }
-	): AsyncIterableIterator<[Uint8Array, Uint8Array]>
-}
-
-declare class Tree implements Target, KeyValueStore {
-	protected constructor(
-		backend: KeyValueStore,
-		options?: { K?: number; Q?: number }
-	) {
-		/* ... */
-	}
-}
-```
-
-The NPM packages `@canvas-js/okra-idb` and `@canvas-js/okra-memory` instantiate this with IndexedDB and an in-memory red/black tree, respectively. These implement `sync` with the same `AsyncIterable<Delta>` interface described here, but don’t have transaction snapshots, so sources must acquire a lock during syncing for consistency. Improving the usability of these libraries is an ongoing project, so treat them as research prototypes for now.
+There is also a JavaScript monorepo at [canvasxyz/okra-js](https://github.com/canvasxyz/okra-js) with native NodeJS bindings for the Zig version, plus a separate abstract pure-JavaScript implementation with IndexedDB and in-memory backends.
 
 ## Conclusions
 
