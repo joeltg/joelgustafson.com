@@ -17,6 +17,7 @@ I'm broadly interested in
 
 ## Projects
 
+- [zig-sqlite](https://github.com/nDimensional/zig-sqlite/) - simple, low-level, explicitly-typed SQLite bindings for Zig
 - [react-lezer-highlighter](https://github.com/joeltg/react-lezer-highlighter) - a tiny library for syntax highlighting on the Web
 - [zkmessage.xyz](https://zkmessage) - a plausibly deniable group message board
 - [mimc.party](https://mimc.party) - a web tool for calculating MiMC hashes
