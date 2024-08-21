@@ -19,22 +19,20 @@
 	},
 	"homepage": "https://github.com/joeltg/joelgustafson.com#readme",
 	"dependencies": {
-		"@lezer/javascript": "^1.4.3",
-		"@lezer/lezer": "^1.1.0",
+		"@lezer/javascript": "^1.4.17",
+		"@lezer/lezer": "^1.1.2",
 		"@types/react": "^18.0.10",
-		"@types/react-dom": "^18.0.5",
+		"@types/react-dom": "^18.3.0",
 		"github-slugger": "^2.0.0",
-		"hast-to-hyperscript": "^10.0.1",
-		"next": "^13.0.1",
+		"next": "^14.2.5",
 		"react": "^18.1.0",
-		"react-dom": "^18.1.0",
-		"react-lezer-highlighter": "^0.1.0",
-		"react-markdown": "^8.0.3",
-		"rehype-raw": "^6.1.1",
-		"sass": "^1.44.0"
+		"react-dom": "^18.3.1",
+		"react-lezer-highlighter": "^0.1.1",
+		"react-markdown": "^9.0.1",
+		"sass": "^1.77.8"
 	},
 	"devDependencies": {
-		"@types/node": "^18.11.9",
-		"typescript": "^4.4.3"
+		"@types/node": "^22.4.2",
+		"typescript": "^5.5.4"
 	}
 }
