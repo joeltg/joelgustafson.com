@@ -1,67 +1,69 @@
 @font-face {
-	font-family: "Lyon Text";
-	src: url("/LyonText-Regular-Web.woff2") format("woff2");
-	font-weight: normal;
-	font-style: normal;
-	font-display: block;
+    font-family: "Lyon Text";
+    src: url("/LyonText-Regular-Web.woff2") format("woff2");
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
 }
 
 @font-face {
-	font-family: "Lyon Text";
-	src: url("/LyonText-RegularItalic-Web.woff2") format("woff2");
-	font-weight: normal;
-	font-style: italic;
-	font-display: block;
+    font-family: "Lyon Text";
+    src: url("/LyonText-RegularItalic-Web.woff2") format("woff2");
+    font-weight: normal;
+    font-style: italic;
+    font-display: block;
 }
 
 @font-face {
-	font-family: "Lyon Text";
-	src: url("/LyonText-Semibold-Web.woff2") format("woff2");
-	font-weight: bold;
-	font-style: normal;
-	font-display: block;
+    font-family: "Lyon Text";
+    src: url("/LyonText-Semibold-Web.woff2") format("woff2");
+    font-weight: bold;
+    font-style: normal;
+    font-display: block;
 }
 
 @font-face {
-	font-family: "Lyon Text";
-	src: url("/LyonText-SemiboldItalic-Web.woff2") format("woff2");
-	font-weight: bold;
-	font-style: italic;
-	font-display: block;
+    font-family: "Lyon Text";
+    src: url("/LyonText-SemiboldItalic-Web.woff2") format("woff2");
+    font-weight: bold;
+    font-style: italic;
+    font-display: block;
 }
 
 :root {
-	--background-color: floralwhite;
-	--main-width: 800px;
-	--text-color-dark: #081b06;
-	--text-color-light: #878e7b;
-	--border-color: lightgray;
+    /* --background-color: floralwhite; */
+    /* --background-color: #fff9f9; */
+    --background-color: #f8f3f3;
+    --main-width: 800px;
+    --text-color-dark: #081b06;
+    --text-color-light: #878e7b;
+    --border-color: lightgray;
 }
 
 html {
-	font-family: "Lyon Text", serif;
-	background-color: var(--background-color);
-	color: var(--text-color-dark);
-	font-size: 18px;
+    font-family: "Lyon Text", serif;
+    background-color: var(--background-color);
+    color: var(--text-color-dark);
+    font-size: 18px;
 }
 
 body {
-	max-width: 1200px;
-	margin: auto;
-	padding: 4em 2em;
+    max-width: 1200px;
+    margin: auto;
+    padding: 4em 2em;
 }
 
 main {
-	max-width: 1024px;
+    max-width: 1024px;
 }
 
 td.date {
-	font-style: italic;
-	white-space: nowrap;
+    font-style: italic;
+    white-space: nowrap;
 }
 
 td {
-	vertical-align: baseline;
+    vertical-align: baseline;
 }
 
 /* td.date::after {
@@ -69,110 +71,120 @@ td {
 } */
 
 article {
-	max-width: 720px;
+    max-width: 720px;
 }
 
 h1 {
-	font-weight: normal;
-	font-size: 32px;
+    font-weight: normal;
+    font-size: 32px;
 }
 
 h2 {
-	font-weight: normal;
-	font-size: 24px;
-	font-style: italic;
-	padding-bottom: 0.25em;
-	border-bottom: 1px solid var(--text-color-dark);
+    font-weight: normal;
+    font-size: 24px;
+    font-style: italic;
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid var(--text-color-dark);
 }
 
 h3 {
-	font-weight: normal;
-	font-size: 20px;
-	font-style: italic;
-	margin-bottom: 0;
+    font-weight: normal;
+    font-size: 20px;
+    font-style: italic;
+    margin-bottom: 0;
 }
 
 h2 > a,
 h3 > a {
-	text-decoration: none;
-	color: var(--text-color-dark);
+    text-decoration: none;
+    color: var(--text-color-dark);
 }
 
 span.anchor {
-	display: inline-block;
-	position: absolute;
-	margin-left: -1em;
-	visibility: hidden;
+    display: inline-block;
+    position: absolute;
+    margin-left: -1em;
+    visibility: hidden;
 }
 
 a:hover > span.anchor {
-	visibility: visible;
+    visibility: visible;
 }
 
 p {
-	line-height: 1.3em;
+    line-height: 1.3em;
 }
 
 img {
-	max-width: 100%;
-	display: inline-block;
-	margin: auto;
-	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+    max-width: 100%;
+    display: inline-block;
+    margin: auto;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
 }
 
 hr {
-	border-style: solid;
-	border-width: 0.5px;
-	color: lightgray;
+    border-style: solid;
+    border-width: 0.5px;
+    color: lightgray;
 }
 
 code {
-	font-size: 14px;
-	font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
-		Liberation Mono, monospace;
+    font-size: 14px;
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        SF Mono,
+        Menlo,
+        Consolas,
+        Liberation Mono,
+        monospace;
 }
 
 p code,
 li code {
-	background-color: oldlace;
-	border: 1px solid lightgray;
-	border-radius: 1px;
-	padding: 1px 2px;
+    /* background-color: oldlace; */
+    /* border: 1px solid lightgray; */
+    background-color: #fff5f3;
+    border: 1px solid #ababab;
+    border-radius: 1px;
+    padding: 1px 2px;
 }
 
 li {
-	line-height: 1.25em;
+    line-height: 1.25em;
 }
 
 pre {
-	border: 0.5px solid lightgray;
-	border-radius: 1px;
-	background-color: oldlace;
-	overflow-x: auto;
-	tab-size: 2;
+    /* background-color: oldlace; */
+    /* border: 0.5px solid lightgray; */
+    background-color: #fff5f3;
+    border: 1px solid #ababab;
+    border-radius: 1px;
+    overflow-x: auto;
+    tab-size: 2;
 }
 
 pre > code {
-	display: block;
-	width: max-content;
-	padding: 1em;
-	line-height: 1.25em;
+    display: block;
+    width: max-content;
+    padding: 1em;
+    line-height: 1.25em;
 }
 
 blockquote {
-	border-left: 0.25em solid var(--border-color);
-	margin-left: 0;
-	padding-left: 1em;
+    border-left: 0.25em solid var(--border-color);
+    margin-left: 0;
+    padding-left: 1em;
 }
 
 blockquote p {
-	white-space: pre-line;
+    white-space: pre-line;
 }
 
 @media (max-width: 880px) {
-	body {
-		padding: 0 8px;
-		margin-bottom: 2em;
-		-webkit-text-size-adjust: none;
-	}
+    body {
+        padding: 0 8px;
+        margin-bottom: 2em;
+        -webkit-text-size-adjust: none;
+    }
 }
