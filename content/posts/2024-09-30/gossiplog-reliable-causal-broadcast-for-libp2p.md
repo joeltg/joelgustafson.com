@@ -188,7 +188,7 @@ Today, you can use GossipLog as a JavaScript library in the browser or NodeJS, a
 
 ## Further reading
 
-- https://docs.canvas.xyz/gossiplog/
+- [https://docs.canvas.xyz/gossiplog/](https://docs.canvas.xyz/gossiplog/)
 - [Keeping CALM: When Distributed Consistency is Easy](https://arxiv.org/pdf/1901.01930)
 - [Byzantine Eventual Consistency and the Fundamental Limits of Peer-to-Peer Databases](https://arxiv.org/pdf/2012.00472)
 
