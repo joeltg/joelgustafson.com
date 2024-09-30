@@ -1,5 +1,6 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import { slug } from "github-slugger";
 import { Code } from "react-lezer-highlighter";
 
@@ -13,7 +14,7 @@ const flatten = (text: string, child: React.ReactNode): string => {
   }
 };
 
-const Anchor = (props: { id: string; children: React.ReactNode[] }) => (
+const Anchor = (props: { id: string; children?: React.ReactNode }) => (
   <a href={`#${props.id}`}>
     <span className="anchor">#</span>
     <span>{props.children}</span>
@@ -23,7 +24,7 @@ const Anchor = (props: { id: string; children: React.ReactNode[] }) => (
 interface CodeProps {
   inline?: boolean;
   className?: string;
-  children: React.ReactNode[];
+  children?: React.ReactNode;
 }
 
 const components = {
@@ -38,10 +39,10 @@ const components = {
   img(props: { src?: string; alt?: string }) {
     return <img srcSet={`${props.src} 2x`} {...props} />;
   },
-  h1: (props: { children: React.ReactNode[] }) => {
+  h1: (props: { children?: React.ReactNode }) => {
     return <h1>{props.children}</h1>;
   },
-  h2: (props: { children: React.ReactNode[] }) => {
+  h2: (props: { children?: React.ReactNode }) => {
     const children = React.Children.toArray(props.children);
     const id = slug(children.reduce(flatten, ""));
     return (
@@ -50,7 +51,7 @@ const components = {
       </h2>
     );
   },
-  h3: (props: { children: React.ReactNode[] }) => {
+  h3: (props: { children?: React.ReactNode }) => {
     const children = React.Children.toArray(props.children);
     const id = slug(children.reduce(flatten, ""));
     return (
@@ -67,7 +68,8 @@ export interface MarkdownProps {
 
 export default function Markdown(props: MarkdownProps) {
   return (
-    // <ReactMarkdown rehypePlugins={[rehypeRaw]} components={components}>
-    <ReactMarkdown components={components}>{props.source}</ReactMarkdown>
+    <ReactMarkdown rehypePlugins={[rehypeRaw]} components={components}>
+      {props.source}
+    </ReactMarkdown>
   );
 }
