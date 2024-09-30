@@ -90,7 +90,7 @@ Most significantly, it allows us to adapt existing CRDTs to open/public peer-to-
 
 <img style="display: block; margin: auto" width="460" alt="Component 15.png" src="Component 15.png" />
 
-We will explore our replicated log implementation and its reliable causal broadcast protocol in more detail in the next post.
+We will explore our replicated log implementation and its reliable causal broadcast protocol in more detail in the [next post](./gossiplog-reliable-causal-broadcast-for-libp2p).
 
 ---
 
