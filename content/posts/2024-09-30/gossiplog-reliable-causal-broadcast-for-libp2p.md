@@ -109,7 +109,7 @@ Prolly Trees are similar in principle to content-defined chunking, used in rsync
 
 <img style="display: block; margin: auto" width="1434" src="./Component 14.png" />
 
-_(these are artificially tall trees - GossipLog uses an average fanout degree of 32 in production)_
+> These are artificially tall trees - GossipLog uses an average fanout degree of 32 in production.
 
 The merkle sync primitive is good because it is _complete_ and _stateless_: it yields every missing message, in causal order, regardless of the ancestor graph topology, and doesn't require peers to know anything about each other beforehand. Syncs can even be aborted at any time by either party - e.g. for rate-limiting reasons on a high-traffic public peer - and will naturally resume from the same place if restarted.
 
