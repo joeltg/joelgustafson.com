@@ -184,7 +184,7 @@ The goal of this post was to introduce causal logs as a useful primitive for bui
 
 The uses of replicated causal logs also extend beyond classical CRDTs into a broader class of computations, limited only by a generalized constraint called _confluence_ (or _logical monotonicity_). It's actually possible to use the log to replicate e.g. the bytecode of database transactions, as opposed to a fixed set of CRDT operations, so long as the effect of evaluating the bytecode satisfies eventual consistency. The typical framing of CRDTs doesn't actually do a good job of capturing the space of possibilities here.
 
-Today, [you can use GossipLog](https://github.com/canvasxyz/canvas/tree/main/packages/gossiplog) as a JavaScript library in the browser or NodeJS, and it's probably of particular interest if you're already using libp2p for a decentralized application. At [Canvas](https://canvas.xyz/), we're using GossipLog as the foundation of a new runtime for off-chain TypeScript smart contracts - another layer of the stack which we'll cover in a future post.
+Today, [you can use GossipLog](https://github.com/canvasxyz/canvas/tree/main/packages/gossiplog) as a JavaScript library in the browser or NodeJS, and it's probably of particular interest if you're already using libp2p for a decentralized application. At [Canvas](https://canvas.xyz/), we're using GossipLog as the foundation of a new distributed state management framework - another layer of the stack which we'll cover in a future post.
 
 ## Further reading
 
