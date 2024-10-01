@@ -4,7 +4,7 @@
 
 In the [last post](./introduction-to-causal-logs), we introduced the _causal log_ as a general-purpose foundation for eventually-consistent replicated applications. The promise is essentially that a single causal log can abstract away the practical "hard parts" of decentralized CRDTs: networking, syncing, access control, and so on.
 
-GossipLog is a self-certifying replicated causal log implementation, with storage backends for SQLite, IndexedDB, and Postgres. It uses [libp2p](https://libp2p.io) for peer-to-peer networking, and achieves reliable causal broadcast using a novel _merkle sync_ protocol.
+GossipLog is a self-certifying replicated causal log implementation, with storage backends for SQLite, IndexedDB, and Postgres. It uses [libp2p](https://libp2p.io) for peer-to-peer networking, and achieves reliable causal broadcast using a novel **merkle sync** protocol.
 
 ## Table of Contents
 
