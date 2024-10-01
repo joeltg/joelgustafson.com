@@ -83,14 +83,16 @@ h2 {
     font-weight: normal;
     font-size: 24px;
     font-style: italic;
+    letter-spacing: 0.025em;
     padding-bottom: 0.25em;
     border-bottom: 1px solid var(--text-color-dark);
 }
 
 h3 {
     font-weight: normal;
-    font-size: 20px;
+    font-size: 22px;
     font-style: italic;
+    letter-spacing: 0.025em;
     margin-bottom: 0;
 }
 
@@ -179,6 +181,10 @@ blockquote {
 
 blockquote p {
     white-space: pre-line;
+}
+
+em {
+    letter-spacing: 0.025em;
 }
 
 @media (max-width: 880px) {
