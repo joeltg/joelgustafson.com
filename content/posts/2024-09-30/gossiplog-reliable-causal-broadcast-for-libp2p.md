@@ -75,7 +75,7 @@ When Alice appends a new message, she needs to broadcast it to the rest of the n
 
 A causal log promises that messages will be applied in causal order, which many useful kinds of CRDTs require. Bob can't apply a message until he has applied all of its transitive ancestors; "orphan" messages with missing parents must be discarded or queued until their dependencies are met.
 
-What peers need is _reliable causal broadcast_ - a way to guarantee delivery of messages, in causal order, to all other peers. But no such network primitive exists. Just like TCP, we have to build a reliable protocol out of fundamentally unreliable components. GossipLog uses two complementary protocols: _pubsub_ and _merkle sync_.
+What peers need is **reliable causal broadcast** - a way to guarantee delivery of messages, in causal order, to all other peers. But no such network primitive exists. Just like TCP, we have to build a reliable protocol out of fundamentally unreliable components. GossipLog uses two complementary protocols: **pubsub** and **merkle sync**.
 
 ### Pubsub
 
