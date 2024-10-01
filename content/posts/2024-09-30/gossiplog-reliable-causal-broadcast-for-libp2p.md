@@ -67,7 +67,7 @@ type Signature = {
 };
 ```
 
-The signature mechanism is generic and self-describing. Each `Signature` object records the `codec` used to serialize the message to bytes for signing, the public key as a [`did:key` URI](https://w3c-ccg.github.io/did-method-key/), which also identifies the specific signature scheme, and the bytes of the signature itself.
+The signature mechanism is generic and self-describing. Each `Signature` object records the `codec` used to serialize the message to bytes for signing, the public key as a [`did:key`](https://w3c-ccg.github.io/did-method-key/) URI, which also identifies the specific signature scheme, and the bytes of the signature itself.
 
 ## Network protocol
 
