@@ -170,7 +170,7 @@ Then we can watch gossipsub propagate of messages across the mesh in real-time!
 
 <img style="display: block; margin: auto" width="640" src="./dht-gossip.gif" />
 
-_(here, the black triangle decorations on the edges indicate inclusion in gossipsub's internal topic mesh, which only some connections are grafted into)_
+> Here, the black triangle decorations on the edges indicate inclusion in gossipsub's internal topic mesh. Only some connections are grafted into the topic mesh.
 
 Another important aspect of syncing is when a new peer has messages that the rest of the network doesn't, such as a user interacting with an app while offline. When it first connects to another peer, it's not enough for that peer to sync the messages - the entire rest of the network must eventually receive them too!
 
