@@ -191,6 +191,10 @@ Today, [you can use GossipLog](https://github.com/canvasxyz/canvas/tree/main/pac
 - [GossipLog on GitHub](https://github.com/canvasxyz/canvas/tree/main/packages/gossiplog)
 - [Keeping CALM: When Distributed Consistency is Easy](https://arxiv.org/pdf/1901.01930)
 - [Byzantine Eventual Consistency and the Fundamental Limits of Peer-to-Peer Databases](https://arxiv.org/pdf/2012.00472)
+- [Merkle Search Trees: Efficient State-Based CRDTs in
+  Open Networks](https://inria.hal.science/hal-02303490/)
+- [Merklizing the key/value store for fun and profit](https://joelgustafson.com/posts/2023-05-04/merklizing-the-key-value-store-for-fun-and-profit)
+- [Range-Based Set Reconciliation](https://logperiodic.com/rbsr.html)
 
 ## Appendix
 
