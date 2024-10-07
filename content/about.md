@@ -20,7 +20,7 @@ I'm broadly interested in
 - [zig-sqlite](https://github.com/nDimensional/zig-sqlite/) - simple, low-level, explicitly-typed SQLite bindings for Zig
 - [zig-lmdb](https://github.com/canvasxyz/zig-lmdb/) - Zig bindings for LMDB
 - [react-lezer-highlighter](https://github.com/joeltg/react-lezer-highlighter) - a tiny library for syntax highlighting on the Web
-- [zkmessage.xyz](https://zkmessage) - a plausibly deniable group message board
+- [zkmessage.xyz](https://0xparc.org/blog/zk-group-sigs) - a plausibly deniable group message board
 - [mimc.party](https://mimc.party) - a web tool for calculating MiMC hashes
 - [codemirror-lang-circom](https://github.com/joeltg/codemirror-lang-circom) - CodeMirror integration for the Circom language
 - [next-rest](https://github.com/joeltg/next-rest) - a framework for writing end-to-end typesafe REST APIs for NextJS
@@ -28,7 +28,7 @@ I'm broadly interested in
 - [fp16](https://github.com/joeltg/fp16) - 16-bit half-precision floating-point numbers for JavaScript
 - [big-varint](https://github.com/joeltg/big-varint) - encode and decode arbitrarily large signed and unsigned varints in JavaScript
 - [react-dataflow-editor](https://github.com/joeltg/react-dataflow-editor) - a generic drag-and-drop dataflow editor for React
-- [ziterable](https://github.com/joeltg/ziterable) - a tiny TypeScript utility for doing generic and variadic iteration
+- [it-zip](https://github.com/joeltg/it-zip) - a tiny TypeScript utility for doing generic and variadic iteration
 - [brainfreeze](https://github.com/joeltg/brainfreeze) - a fully homomorphic implementation of Brainfuck
 - [mental.bike](https://mental.bike/) - reminding us to not lose sight of how good things could be
 - [thingsandstuff.com](https://thingsandstuff.com/) - self-explanatory
