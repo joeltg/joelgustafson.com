@@ -172,7 +172,7 @@ After a few rounds of design iteration, I settled on a process that computes a k
 
 These hues are just single floats from 0 to 1, which I map to rgb using the hsluv color space. Saturation for every node is constant, to give the visualization some consistent visual identity. And lightness is scaled using the log10 of each user's follower count, so that large accounts appear as bright stars and lowbies appear muted. I had originally tried to render large accounts literally larger, but that turned out way too visually cluttered for large graphs.
 
-Here's the full network as of 2024-11-07.
+Here's the full network as of 2024-11-07. I filtered out accounts that follow more than 50k accounts, or follow less than 5 accounts and have less than 5 followers, leaving 7.7 million nodes.
 
 <p>
   <img style="display: block; margin: auto" src="https://assets.joelgustafson.com/2024-11-12/Screenshot 2024-11-12 at 11.13.55 AM.jpg" />
