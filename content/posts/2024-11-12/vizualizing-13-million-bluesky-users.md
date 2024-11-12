@@ -26,7 +26,7 @@ BlueSky is build on the [AT protocol](https://atproto.com/), designed to realist
 
 At first, last year, I set up a fancy system where I deployed the indexer to [fly.io](https://fly.io/), and configured it to replicate the database in realtime to an AWS S3 bucket using litestream. But that was a little over-engineered, and surprisingly expensive to run (my Fly bill was $40/month), so I shut it down and switched to running it entirely on my home server. I installed the indexer as a systemd service, and configured logrotate and a tmux monitor to let me ssh in through TailScale and watch the event stream live from anywhere.
 
-<img style="display: block; margin: auto" width="508" src="https://assets.joelgustafson.com/2024-11-12/DSCF2891.JPG" />
+<img style="display: block; margin: auto" src="https://assets.joelgustafson.com/2024-11-12/DSCF2891.JPG" />
 
 Everything described in this entire post happens on this System76 desktop in my apartment.
 
