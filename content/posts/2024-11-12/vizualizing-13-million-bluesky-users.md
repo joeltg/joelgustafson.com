@@ -204,4 +204,6 @@ There's a lot to learn from exploring the graph. Bot rings show up clearly expos
 
 The next feature I'd like to add is a collapsible sidebar with a timeline of posts from just the accounts currently in view, so that you can easily check in on what the area you're looking at has been talking about. If you have other ideas let me know on [BlueSky](https://bsky.app/profile/syntacrobat.xyz) or [Twitter](https://x.com/gustafjt/); I'd love for this to be the beginning of a new kind of social/memetic exploration tool.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/PMJEPvuNNo4?si=1If10cR4F1ICrr4Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<p>
+  <iframe style="width: 100%" height="480" src="https://www.youtube.com/embed/PMJEPvuNNo4?si=1If10cR4F1ICrr4Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</p>
