@@ -28,7 +28,7 @@ At first, last year, I set up a fancy system where I deployed the indexer to [fl
 
 <img style="display: block; margin: auto" src="https://assets.joelgustafson.com/2024-11-12/DSCF2891.JPG" />
 
-Everything described in this entire post happens on this System76 desktop in my apartment.
+Everything described in this entire post happens on this System76 desktop in my apartment. Brother HL-L2350DW for scale.
 
 How much data is there? BlueSky is growing quickly, but at the time of writing, it recently passed 13 million users, and the `follows` table had a little over half a billion rows, which was only around 30 GB on disk.
 
