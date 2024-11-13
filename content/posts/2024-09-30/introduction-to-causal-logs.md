@@ -12,7 +12,9 @@ This post is a high-level introduction to causal logs by analogy to traditional 
 
 The humble log is the invisible technology at the core of almost every distributed system. Databases use logs to order transactions. Blockchains are a kind of log. Logs-as-in-logging are logs. "Event sourcing" is the fancy system-design word for doing things with logs.
 
-<img style="display: block; margin: auto" width="440" alt="Component 2.png" src="Component 2.png" />
+<p>
+  <img style="display: block; margin: auto" width="440" alt="Component 2.png" src="https://assets.joelgustafson.com/2024-09-30/Component 2.png" />
+</p>
 
 Jay Kreps wrote [a great introduction](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying) to the understated significance of logs in which he highlights two particular roles:
 
@@ -32,11 +34,15 @@ Blockchains are not actually different in this respect. Only one block proposer 
 
 Causal logs relax the total ordering constraint, allowing events with multiple parents instead of exactly one.
 
-<img style="display: block; margin: auto" width="440" alt="Component 3.png" src="Component 3.png" />
+<p>
+  <img style="display: block; margin: auto" width="440" alt="Component 3.png" src="https://assets.joelgustafson.com/2024-09-30/Component 3.png" />
+</p>
 
 Causal logs are truly multi-writer. Any number of peers can replicate the log, and they can each directly write to their local replica at any time without going through an individual leader or transaction mempool. Here, Alice and Bob start with the same state, write to their logs separately, and send each other the new events afterwards.
 
-<img style="display: block; margin: auto" width="495" alt="Component 4.png" src="Component 4.png" />
+<p>
+  <img style="display: block; margin: auto" width="495" alt="Component 4.png" src="https://assets.joelgustafson.com/2024-09-30/Component 4.png" />
+</p>
 
 (For clarity, we'll use "append" to refer to the initial creation of a new event by a particular replica, and "insert" for the ingestion of an existing event received from another replica.)
 
@@ -44,31 +50,43 @@ This means concurrent events result in parallel branches. Branches might be arbi
 
 A causal log superficially resembles a Git repository. Branches in the log can be "merged" by appending an event with multiple branch heads as parents, similar to a merge commit. But an important difference is that in Git, merge commits are semantically meaningful: they represent a deliberate action taken by the programmer to explicitly resolve conflicts. For causal logs, merging isn't a separate kind of event, and doesn't relate to the contents of the different branches. A replica _always_ merges _all_ of its concurrent branches _every_ time it appends.
 
-<img style="display: block; margin: auto" width="615" alt="Component 5.png" src="Component 5.png" />
+<p>
+  <img style="display: block; margin: auto" width="615" alt="Component 5.png" src="https://assets.joelgustafson.com/2024-09-30/Component 5.png" />
+</p>
 
 Causal logs only use the graph structure to record the partial order in which events are created relative to each other. One consequence of this is that an event's set of transitive ancestors are exactly the state of its origin replica's log at the time it was appended. Here, everyone can tell by looking at the graph that when Alice created event C, she had only received A and B, not E (or D or F).
 
-<img style="display: block; margin: auto" width="440" alt="Component 6.png" src="Component 6.png" />
+<p>
+  <img style="display: block; margin: auto" width="440" alt="Component 6.png" src="https://assets.joelgustafson.com/2024-09-30/Component 6.png" />
+</p>
 
 ---
 
 Traditional logs operate with useful guarantee that entries are applied in exactly the same order for all replicas. This guarantee is the basis for the consistency of distributed databases. If two transactions write conflicting values to the same record, everybody needs to agree on which to apply first.
 
-<img style="display: block; margin: auto" width="446" alt="Component 7.png" src="Component 7.png" />
+<p>
+  <img style="display: block; margin: auto" width="446" alt="Component 7.png" src="https://assets.joelgustafson.com/2024-09-30/Component 7.png" />
+</p>
 
 Causal logs have a weaker guarantee: entries are applied in _causal order_. Parents are always applied before their children, but different replicas might receive and apply different concurrent branches in a different order. In the example from earlier, Alice would apply A-B-C-D-E-F, Bob would apply A-B-E-C-D-F, and a third replica Claire might even apply A-B-C-E-D-F.
 
-<img style="display: block; margin: auto" width="570" alt="Component 8.png" src="Component 8.png" />
+<p>
+  <img style="display: block; margin: auto" width="570" alt="Component 8.png" src="https://assets.joelgustafson.com/2024-09-30/Component 8.png" />
+</p>
 
 Let's look at a toy example again. What should the state of everyone's key/value store be after applying these entries?
 
-<img style="display: block; margin: auto" width="500" alt="Component 9.png" src="Component 9.png" />
+<p>
+  <img style="display: block; margin: auto" width="500" alt="Component 9.png" src="https://assets.joelgustafson.com/2024-09-30/Component 9.png" />
+</p>
 
 It's easy enough to say that `x=qux` from F should overwrite `x=foo` from A, because A is in F's set of transitive ancestors (there's a path from A to F), so whoever appended F had already applied A and thus we can assume they "intended" to overwrite it. Same goes for `y=eee` taking precedence over `y=bar`. But we also have two effects `z=baz` and `z=fff` that are mutually concurrent - neither directly precedes the other. How do we pick one to win?
 
 There isn't a specific right answer. If Alice and Bob were writing to a traditional database at the same time they'd expect it to just pick an order arbitrarily; that's just what happens. The only thing we can do here is establish a deterministic way of choosing between concurrent writes. The simplest is to compare the hashes of the events and take the higher one - now everyone converges to the same state, regardless of the topological order applied!
 
-<img style="display: block; margin: auto" width="547" alt="Component 10.png" src="Component 10.png" />
+<p>
+  <img style="display: block; margin: auto" width="547" alt="Component 10.png" src="https://assets.joelgustafson.com/2024-09-30/Component 10.png" />
+</p>
 
 In practice, this involves tracking enough additional state to efficiently evaluate effect precedence: a way to easily tell if two events are ancestors or not, adding a `version` to each key/value entry to store source event hashes, and a table of "tombstones" to record deletes.
 
@@ -88,7 +106,9 @@ But a causal log can be also be viewed as a concurrent generalization of a block
 
 Most significantly, it allows us to adapt existing CRDTs to open/public peer-to-peer environments. The only constraint is that the log entries must be [self-certifying](https://jaygraber.medium.com/web3-is-self-certifying-9dad77fd8d81) in addition to commutative. A single decentralized causal log implementation can abstract away the hard parts like networking and syncing, and serve as a general-purpose foundation for making automatically-decentralized applications that anyone replicate and interact with.
 
-<img style="display: block; margin: auto" width="460" alt="Component 15.png" src="Component 15.png" />
+<p>
+  <img style="display: block; margin: auto" width="460" alt="Component 15.png" src="https://assets.joelgustafson.com/2024-09-30/Component 15.png" />
+</p>
 
 We will explore our replicated log implementation and its reliable causal broadcast protocol in more detail in the [next post](./gossiplog-reliable-causal-broadcast-for-libp2p).
 

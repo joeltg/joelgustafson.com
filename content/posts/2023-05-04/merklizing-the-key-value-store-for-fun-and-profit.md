@@ -253,15 +253,17 @@ This way of building a merkle tree is clearly deterministic, but how does it beh
 
 Let’s start with some visualizations to build our intuition. Here, we build a tree with `Q = 4` (so nodes whose hash begins with a byte less than `0x40` are boundaries) by inserting entries at the start, at the end, and randomly, respectively. The nodes that are created or whose hash changed in each step are highlighted in yellow, the rest existed with the same hash in the previous frame.
 
-<img width="232" alt="64-build-start.gif" src="./64-build-start.gif" /> <img width="232" alt="64-build-end.gif" src="./64-build-end.gif" /> <img width="232" alt="64-build-random.gif" src="./64-build-random.gif" />
-
-<!-- ![64-build-start.gif](./64-build-start.gif) ![64-build-end.gif](./64-build-end.gif) ![64-build-random.gif](./64-build-random.gif) -->
+<p>
+  <img width="232" alt="64-build-start.gif" src="./64-build-start.gif" />
+  <img width="232" alt="64-build-end.gif" src="./64-build-end.gif" />
+  <img width="232" alt="64-build-random.gif" src="./64-build-random.gif" />
+</p>
 
 Pretty cool! In all cases, even random, almost all of the higher-level nodes survive edits, and changes are localized to the new entry’s direct path to the root... plus a few in the surrounding area. Here’s a longer look at in-place edits in the tree (setting random new values for existing keys):
 
-<img width="720" alt="64-random-big.gif" src="./64-random-big.gif" />
-
-<!-- ![64-random-big.gif](./64-random-big.gif) -->
+<p>
+  <img style="display: block; margin: auto" alt="64-random-big.gif" src="./64-random-big.gif" />
+</p>
 
 The tree’s height goes up and down over time, but tends to stay around level 4, or a little below. We’re using `Q = 4` with 64 entries, but `log_4(64) = 3`. There’s a slight bias in the height due to the way we’ve defined anchor nodes - it’s like scaffolding that a regular tree doesn’t have, and effectively adds 1 to the average height.
 
@@ -398,25 +400,25 @@ So far, we’ve been vague about how these merkle skip lists are useful, casuall
 We’ll use TypeScript to make things concrete. First, some types for keys and nodes.
 
 ```tsx
-type Key = Uint8Array | null
+type Key = Uint8Array | null;
 
 type Node = {
-	level: number
-	key: Key
-	hash: Uint8Array
-	value?: Uint8Array // only present if level === 0 && key !== null
-}
+  level: number;
+  key: Key;
+  hash: Uint8Array;
+  value?: Uint8Array; // only present if level === 0 && key !== null
+};
 ```
 
 Syncing will still be directional, where the initiator plays the role of a local client making a series of requests, and the other party plays the role of a remote server responding to those requests. But, to emphasize that the same parties could play either role, we’ll call the server/remote role `Source` and the client/local role `Target`.
 
 ```tsx
 interface Source {
-	getRoot(): Promise<Node>
+  getRoot(): Promise<Node>;
 
-	getNode(level: number, key: Key): Promise<Node | null>
+  getNode(level: number, key: Key): Promise<Node | null>;
 
-	getChildren(level: number, key: Key): Promise<Node[]>
+  getChildren(level: number, key: Key): Promise<Node[]>;
 }
 ```
 
@@ -426,17 +428,17 @@ Locally, all we need from the `Target` tree is the same methods as `Source`, plu
 
 ```tsx
 interface Target extends Source {
-	nodes(
-		level: number,
-		lowerBound?: { key: Key; inclusive: boolean } | null,
-		upperBound?: { key: Key; inclusive: boolean } | null
-	): AsyncIterableIterator<Node>
+  nodes(
+    level: number,
+    lowerBound?: { key: Key; inclusive: boolean } | null,
+    upperBound?: { key: Key; inclusive: boolean } | null,
+  ): AsyncIterableIterator<Node>;
 
-	get(key: Uint8Array): Promise<Uint8Array | null>
+  get(key: Uint8Array): Promise<Uint8Array | null>;
 
-	set(key: Uint8Array, value: Uint8Array): Promise<void>
+  set(key: Uint8Array, value: Uint8Array): Promise<void>;
 
-	delete(key: Uint8Array): Promise<void>
+  delete(key: Uint8Array): Promise<void>;
 }
 ```
 
@@ -446,13 +448,13 @@ Cool! Now for the main attraction. Everything that we’ve done so far was all b
 
 ```tsx
 type Delta = {
-	key: Uint8Array
-	sourceValue: Uint8Array | null
-	targetValue: Uint8Array | null
-}
+  key: Uint8Array;
+  sourceValue: Uint8Array | null;
+  targetValue: Uint8Array | null;
+};
 
 function sync(source: Source, target: Target): AsyncIterable<Delta> {
-	// ...
+  // ...
 }
 ```
 
@@ -477,11 +479,11 @@ Suppose we want to recreate `rsync`, where Alice is the source of truth and Bob 
 // client connection `source: Source` to Alice
 
 for await (const { key, sourceValue, targetValue } of sync(source, target)) {
-	if (sourceValue === null) {
-		await target.delete(key)
-	} else {
-		await target.set(key, sourceValue)
-	}
+  if (sourceValue === null) {
+    await target.delete(key);
+  } else {
+    await target.set(key, sourceValue);
+  }
 }
 ```
 
@@ -497,13 +499,13 @@ In this case, they can both store events in our merklized key/value store using 
 // Bob has a local tree `target: Target` and a
 // client connection `source: Source` to Alice
 for await (const { key, sourceValue, targetValue } of sync(source, target)) {
-	if (sourceValue === null) {
-		continue
-	} else if (targetValue === null) {
-		await target.set(key, sourceValue)
-	} else {
-		throw new Error("Conflicting values for the same hash")
-	}
+  if (sourceValue === null) {
+    continue;
+  } else if (targetValue === null) {
+    await target.set(key, sourceValue);
+  } else {
+    throw new Error("Conflicting values for the same hash");
+  }
 }
 ```
 
@@ -526,19 +528,19 @@ Merkle sync doesn’t magically get us all the way there, but it brings us close
 // e.g. parsing structure out of the values and using
 // a causal order to choose and return a winner.
 declare function merge(
-	key: Uint8Array,
-	sourceValue: Uint8Array,
-	targetValue: Uint8Array
-): Uint8Array
+  key: Uint8Array,
+  sourceValue: Uint8Array,
+  targetValue: Uint8Array,
+): Uint8Array;
 
 for await (const { key, sourceValue, targetValue } of sync(source, target)) {
-	if (sourceValue === null) {
-		continue
-	} else if (targetValue === null) {
-		await target.set(key, sourceValue)
-	} else {
-		await target.set(key, merge(key, sourceValue, targetValue))
-	}
+  if (sourceValue === null) {
+    continue;
+  } else if (targetValue === null) {
+    await target.set(key, sourceValue);
+  } else {
+    await target.set(key, merge(key, sourceValue, targetValue));
+  }
 }
 ```
 
@@ -551,39 +553,39 @@ As you might expect, the `merge` function must be commutative, associative, and 
 To get multi-writer mutability, Alice and Bob wrap their values with some tag that lets them compute a deterministic causal ordering. Here’s a naive implementation of `merge` that uses last-write-wins timestamps.
 
 ```tsx
-type Value = { updatedAt: number; value: any }
+type Value = { updatedAt: number; value: any };
 
 function merge(
-	key: Uint8Array,
-	sourceValue: Uint8Array,
-	targetValue: Uint8Array
+  key: Uint8Array,
+  sourceValue: Uint8Array,
+  targetValue: Uint8Array,
 ): Uint8Array {
-	const decoder = new TextDecoder()
-	const s = JSON.parse(decoder.decode(sourceValue)) as Value
-	const t = JSON.parse(decoder.decode(targetValue)) as Value
-	if (s.updatedAt < t.updatedAt) {
-		return targetValue
-	} else if (t.updatedAt < s.updatedAt) {
-		return sourceValue
-	} else {
-		return lessThan(sourceValue, targetValue) ? sourceValue : targetValue
-	}
+  const decoder = new TextDecoder();
+  const s = JSON.parse(decoder.decode(sourceValue)) as Value;
+  const t = JSON.parse(decoder.decode(targetValue)) as Value;
+  if (s.updatedAt < t.updatedAt) {
+    return targetValue;
+  } else if (t.updatedAt < s.updatedAt) {
+    return sourceValue;
+  } else {
+    return lessThan(sourceValue, targetValue) ? sourceValue : targetValue;
+  }
 }
 
 // used to break ties for values with the same timestamp
 function lessThan(a: Uint8Array, b: Uint8Array): boolean {
-	let x = a.length
-	let y = b.length
+  let x = a.length;
+  let y = b.length;
 
-	for (let i = 0, len = Math.min(x, y); i < len; i++) {
-		if (a[i] !== b[i]) {
-			x = a[i]
-			y = b[i]
-			break
-		}
-	}
+  for (let i = 0, len = Math.min(x, y); i < len; i++) {
+    if (a[i] !== b[i]) {
+      x = a[i];
+      y = b[i];
+      break;
+    }
+  }
 
-	return x < y
+  return x < y;
 }
 ```
 

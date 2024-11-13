@@ -30,13 +30,17 @@ GossipLog is a self-certifying replicated causal log implementation, with storag
 
 When working with causal logs, it's extremely useful to have IDs for the messages that sort according to causal order. A natural way to do this is to introduce a [logical clock](https://en.wikipedia.org/wiki/Logical_clock) for the log, where each message has a clock value equal to one more than the max clock value of its parents (or 1 for initial messages with no parents). This value is equivalent to the maximum depth of the message's ancestor graph.
 
-<img style="display: block; margin: auto" width="446" src="./Component 11.png" />
+<p>
+  <img style="display: block; margin: auto" width="446" src="https://assets.joelgustafson.com/2024-09-30/Component 11.png" />
+</p>
 
 Concurrent messages might have the same clock value, but every ancestor of a message is guaranteed to have a smaller clock value, and every descendant is guaranteed to have a larger clock value.
 
 GossipLog uses a message ID format that begins with the clock value as a variable-length integer using an order-preserving [prefix-free encoding](https://en.wikipedia.org/wiki/Prefix_code). This is concatenated with the sha256 hash of the [`dag-cbor`](https://ipld.io/docs/codecs/known/dag-cbor/)-encoded message, truncated to 20 bytes total, and encoded to a string using [`base32hex`](https://datatracker.ietf.org/doc/html/rfc4648#section-7). This produces unique 32-character alphanumeric identifiers that follow causal order: if A is an ancestor of B, then `id(A) < id(B)`.
 
-<img style="display: block; margin: auto" width="517" src="./Component 1.png" />
+<p>
+  <img style="display: block; margin: auto" width="517" src="https://assets.joelgustafson.com/2024-09-30/Component 1.png" />
+</p>
 
 This makes implementing eventually-consistent last-writer-wins registers especially simple, since the message IDs themselves are sufficient to determine effect precedence.
 
@@ -91,11 +95,15 @@ GossipSub gives us low-latency broadcast to open networks with good-enough attac
 
 Whenever two peers connect to each other, a sensible first step is figure out if either has messages the other is missing, and to acquire those messages from each other.
 
-<img style="display: block; margin: auto" width="495" src="./Component 13.png" />
+<p>
+  <img style="display: block; margin: auto" width="495" src="https://assets.joelgustafson.com/2024-09-30/Component 13.png" />
+</p>
 
 One way of doing this is to have peers exchange their current set of branch "heads" (messages with no descendants), which uniquely identify the entire set of messages in their respective logs. If one peer is missing any of the ids in the other's set of heads, they know they're missing one or more messages that the other peer has.
 
-<img style="display: block; margin: auto" width="540" src="./Component 12.png" />
+<p>
+  <img style="display: block; margin: auto" width="540" src="https://assets.joelgustafson.com/2024-09-30/Component 12.png" />
+</p>
 
 What to do next is a more difficult question. We could have peers request missing messages individually from each other, in a step-by-step graph traversal. But this yields messages in **reverse** causal order, from most to least recent - the opposite of what we want! In the worst case, a new peer joining the network with an empty log would have to request every message from another peer's entire log one-by-one from head to tail, and buffer them all before applying them last-in-first-out. This also opens up a new attack vector in which a malicious peer claims to have an infinite number of nonexistent messages, and overflows the buffer of peers trying to sync with it.
 
@@ -107,7 +115,9 @@ In addition to storing message contents in a SQLite database, GossipLog maintain
 
 Prolly Trees are similar in principle to content-defined chunking, used in rsync since 1996. An important difference is that rsync can only be used in one direction - pulling in changes from a single source of truth - but merkle sync yields _entry-wise diffs_. This means Alice and Bob can each have many respective divergent branches and still sync with each other at the same time. Alice will yield the messages she's missing from Bob, skipping the messages she has but Bob doesn't; Bob will yield the messages he's missing from Alice, skipping the messages he has but Alice doesn't.
 
-<img style="display: block; margin: auto" width="1434" src="./Component 14.png" />
+<p>
+  <img style="display: block; margin: auto" width="1434" src="https://assets.joelgustafson.com/2024-09-30/Component 14.png" />
+</p>
 
 > These are artificially tall trees - GossipLog uses an average fanout degree of 32 in production.
 
@@ -144,13 +154,17 @@ Browser GossipLog peers can connect to a server peer over a WebSocket connection
 
 Here are some screen recordings of our network testing environment, which uses Docker compose and Puppeteer to orchestrate different topologies, streaming events and metrics to a D3 dashboard in real-time. Peers join the network after a random delay. The color of each peer is derived from the root merkle hash of the log, so nodes that are the same color have exactly the same log entries, and nodes of different colors are out of sync.
 
-<img style="display: block; margin: auto" width="600" src="./hub-and-spoke.gif" />
+<p>
+  <img style="display: block; margin: auto" width="600" src="https://assets.joelgustafson.com/2024-09-30/hub-and-spoke.gif" />
+</p>
 
 Above, we append random messages manually by clicking on nodes, and see that they instantly propagate to the rest of the network. As new clients join the network, they can tell from the server's initial push update that they're out-of-sync, and immediately start a merkle sync that yields all of the missing entries. This causes the "jump" to the current latest color right after they connect to the hub.
 
 Below, all peers automatically append messages at random.
 
-<img style="display: block; margin: auto" width="640" src="Screen Recording 2024-09-30 at 1.14.28 PM.gif" />
+<p>
+  <img style="display: block; margin: auto" width="640" src="https://assets.joelgustafson.com/2024-09-30/Screen Recording 2024-09-30 at 1.14.28 PM.gif" />
+</p>
 
 ### Server-to-server p2p mesh
 
@@ -164,11 +178,15 @@ This all means that even for networks that don't need DHT provides and look-ups,
 
 Here's a network of 64 peers all bootstrapping to the same server (in black), and then organizing themselves using the DHT service.
 
-<img style="display: block; margin: auto" width="640" src="./dht-peer-discovery.gif" />
+<p>
+  <img style="display: block; margin: auto" width="640" src="https://assets.joelgustafson.com/2024-09-30/dht-peer-discovery.gif" />
+</p>
 
 Then we can watch gossipsub propagate of messages across the mesh in real-time!
 
-<img style="display: block; margin: auto" width="640" src="./dht-gossip.gif" />
+<p>
+  <img style="display: block; margin: auto" width="640" src="https://assets.joelgustafson.com/2024-09-30/dht-gossip.gif" />
+</p>
 
 > Here, the black triangle decorations on the edges indicate inclusion in gossipsub's internal topic mesh. Only some connections are grafted into the topic mesh.
 
@@ -176,7 +194,9 @@ Another important aspect of syncing is when a new peer has messages that the res
 
 Here, peers all join with a small number of unique local messages (see that the new peers are all different initial colors, unlike the previous examples). Once they connect, their local messages propagate through the network through alternating push and sync steps. This is slower than gossipsub, but still converges quickly.
 
-<img style="display: block; margin: auto" width="600" src="./mesh-sync.gif" />
+<p>
+  <img style="display: block; margin: auto" width="600" src="https://assets.joelgustafson.com/2024-09-30/mesh-sync.gif" />
+</p>
 
 ## Conclusion
 
