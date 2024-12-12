@@ -64,6 +64,7 @@ export default function App(props: AppProps<PageProps>) {
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:site" content="@gustafjt" />
         <meta name="twitter:title" content={title} />
+        <meta name="twitter:image" content="/favicon.png" />
       </Head>
       <main>
         <article>
