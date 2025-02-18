@@ -1,5 +1,7 @@
 # Visualizing 13 million BlueSky users
 
+[Joel Gustafson](/) · _2024-11-12_
+
 Anyone who uses Twitter a lot knows that it's a big place. Not just that it has a lot of active users, but more that there are lots of different parts.
 
 Over time, everybody develops their own mental map of the landscape, infering how vast and foreign the whole network is from hints and clues, stray tweets escaping containment, and chance encounters in a big account's replies. But we never get to see the whole thing for real.
